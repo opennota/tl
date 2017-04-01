@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ .Title }} - Read</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li>
+            <a href="/book/{{ .ID }}">{{ .Title }}</a>
+          </li>
+          <li class="active">
+            <a href="/book/{{ .ID }}/read">Read</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      {{ range .Fragments }}
+        <p class="text">
+          {{ if gt (len .Versions) 0 }}
+            {{ render ((index .Versions 0).Text) }}
+          {{ else }}
+            {{ render .Text }}
+          {{ end }}
+        </p>
+      {{ end }}
+    </div>
+  </body>
+</html>

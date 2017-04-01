@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.form.js"></script>
+    <script src="/js/jquery.autogrowtextarea.min.js"></script>
+    <script src="/js/jquery.scrollTo.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <script src="/js/markdown-it.min.js"></script>
+    <script src="/js/translate.js"></script>
+    <script id="translate-form-tmpl" type="text/template">
+      <form class="editing" method="POST">
+        <input type="hidden" name="version_id" value=""></input>
+        <div class="text">
+          <textarea name="text" lang="ru"></textarea>
+        </div>
+        <div class="alert-container"></div>
+        <div class="btn-group btn-group-xs buttons">
+          <button type="submit" class="btn btn-primary"></button>
+          <button type="button" class="btn btn-default cancel">Cancel</button>
+          <span class="tr_counts">
+            Original/translation: <b class="cnt-o">?</b>/<b class="cnt-t">?</b>
+          </span>
+        </div>
+      </form>
+    </script>
+    <script id="version-tmpl" type="text/template">
+      <div id="version_id">
+        <p class="text"></p>
+        <div class="toolbox">
+          <i class="fa fa-pencil-square-o x-edit"></i>
+          <i class="fa fa-times x-remove"></i>
+        </div>
+      </div>
+    </script>
+    <script id="edit-orig-form-tmpl" type="text/template">
+      <form class="editing" method="POST">
+        <div class="text">
+          <textarea name="text" lang="en"></textarea>
+        </div>
+        <div class="alert-container"></div>
+        <div class="btn-group btn-group-xs buttons">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-default cancel">Cancel</button>
+        </div>
+      </form>
+    </script>
+    <script id="orig-tmpl" type="text/template">
+      <div>
+        <p class="text"></p>
+        <div class="toolbox">
+          <i class="fa fa-caret-left x-expand"></i>
+          <i class="fa fa-pencil-square-o x-edit-orig"></i>
+          <i class="fa fa-plus x-add-orig"></i>
+          <i class="fa fa-times x-remove-orig"></i>
+        </div>
+      </div>
+      <a class="permalink">#</a>
+    </script>
+    <script id="alert-tmpl" type="text/template">
+      <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">
+          &times;
+        </button>
+      </div>
+    </script>
+    <script id="transp-div-tmpl" type="text/template">
+      <div style="position: absolute; left: 0; right: 0; top: 0; bottom: 0;"></div>
+    </script>
+    <script id="comment-form-tmpl" type="text/template">
+      <form class="comment-form" method="POST">
+        <div class="text" title="Double click to edit"></div>
+        <div class="alert-container"></div>
+        <div class="btn-group btn-group-xs comment-form-buttons pull-right">
+          <button type="submit" class="btn btn-primary">
+            Save
+          </button>
+        </div>
+        <i class="fa fa-times-circle icon-close"></i>
+      </form>
+    </script>
+    <script id="new-row-tmpl" type="text/template">
+      <tr class="editing">
+        <td>
+          <i class="fa fa-arrow-up x-orig-up"></i>
+          <i class="fa fa-arrow-down x-orig-down"></i>
+        </td>
+        <td class="o">
+          <form class="editing" method="POST">
+            <input type="hidden" name="after"/>
+            <div class="text">
+              <textarea name="text" lang="en"></textarea>
+            </div>
+            <div class="alert-container"></div>
+            <div class="btn-group btn-group-xs buttons">
+              <button type="submit" class="btn btn-primary">Add</button>
+              <button type="button" class="btn btn-default cancel">Cancel</button>
+            </div>
+          </form>
+        </td>
+        <td></td>
+        <td class="t">
+        </td>
+        <td></td>
+      </tr>
+    </script>
+    <script>
+      // strings to make linters happy
+      const book_id = "{{ .ID }}";
+      var fragments_total = "{{ .FragmentsTotal }}";
+      var fragments_translated = "{{ .FragmentsTranslated }}";
+    </script>
+  </head>
+  <body>
+    <div id="container" class="container">
+      <h1>{{ .Title }}</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li class="active">
+            <a href="/book/{{ .ID }}">{{ .Title }}</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      <form id="filter-form" method="GET" action="/book/{{ .ID }}">
+        <div class="btn-toolbar">
+          <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle button-filter" data-toggle="dropdown">
+              Filter
+              {{ if and (.Query.Get "f") }}
+                <sup>{{ .Pagination.TotalItems }}</sup>
+              {{ end }}
+              <span class="caret"></span>
+            </button>
+
+            {{ if .Query.Get "f" }}
+              <a class="btn btn-xs image-link clear-filter-link" href="/book/{{ .ID }}">
+                <i class="fa fa-times"></i>
+              </a>
+            {{ end }}
+
+            <ul class="dropdown-menu dropdown-filter">
+              <li>
+                <label>
+                  <input name="f" type="radio" value="u"
+                    {{ if eq (.Query.Get "f") "u" }}checked{{ end }}></input>
+                  <a href="?f=u">Untranslated</a>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="c"
+                    {{ if eq (.Query.Get "f") "c" }}checked{{ end }}></input>
+                  <a href="?f=c">Commented</a>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="s"
+                    {{ if eq (.Query.Get "f") "s" }}checked{{ end }}></input>
+                  <a href="?f=s">Starred</a>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="2"
+                    {{ if eq (.Query.Get "f") "2" }}checked{{ end }}></input>
+                  <a href="?f=2">With two or more versions</a>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="o"
+                    {{ if eq (.Query.Get "f") "o" }}checked{{ end }}></input>
+                  <input name="to" type="text" placeholder="The original contains"
+                    value="{{ .Query.Get "to" }}"></input>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="t"
+                    {{ if eq (.Query.Get "f") "t" }}checked{{ end }}></input>
+                  <input name="tt" type="text" placeholder="The translation contains"
+                    value="{{ .Query.Get "tt" }}"></input>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input name="f" type="radio" value="l"
+                    {{ if eq (.Query.Get "f") "l" }}checked{{ end }}></input>
+                  <select name="comp">
+                    <option value="less">
+                      Less
+                    </option>
+                    <option value="more" {{ if eq (.Query.Get "comp") "more" }}selected{{ end }}>
+                      More
+                    </option>
+                  </select>
+                  than
+                  <input name="n" type="text" size="4" value="{{ .Query.Get "n" }}"></input>
+                  <select name="unit">
+                    <option value="characters">
+                      characters
+                    </option>
+                    <option value="words" {{ if eq (.Query.Get "unit") "words" }}selected{{ end }}>
+                      words
+                    </option>
+                  </select>
+                </label>
+              </li>
+              <li>
+                <div class="btn-group btn-group-xs filter-buttons">
+                  <button class="btn btn-primary">
+                    Show
+                  </button>
+                  <a class="btn btn-default" href="/book/{{ .ID }}">
+                    Reset
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="btn-group btn-group-xs">
+            <i class="btn fa fa-window-restore"></i>
+          </div>
+
+          <div class="btn-group btn-group-xs">
+            <div class="progress progress-striped">
+              <div class="progress-bar progress-bar-success" style="width: {{ pct .FragmentsTranslated .FragmentsTotal }}%"></div>
+              <span>
+                <i class="percent">{{ pct .FragmentsTranslated .FragmentsTotal }}</i>%
+                -
+                <a href="/book/{{ .ID }}/read">Read</a>
+              </span>
+            </div>
+          </div>
+
+          <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle button-export" data-toggle="dropdown">
+              Export as
+              <span class="caret"></span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-export">
+              <li>
+                <a href="/book/{{ .ID }}/export?f=plaintext">Plain text</a>
+              </li>
+              <li>
+                <a href="/book/{{ .ID }}/export?f=csv">CSV</a>
+              </li>
+              <li>
+                <a href="/book/{{ .ID }}/export?f=jsonl">JSON Lines</a>
+              </li>
+            </ul>
+          </div>
+
+          {{ .Pagination.Render }}
+        </div>
+      </form>
+
+      <div class="alert alert-warning orig-empty-alert" style="display: none;">
+        The text of the original is missing.
+        <a href="#">Add a fragment.</a>
+      </div>
+
+      <table class="table translator">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Original</th>
+            <th></th>
+            <th>Translation</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range .Fragments }}
+            <tr id="f{{ .ID }}">
+              <td>
+                {{ if .Starred }}
+                  <i class="fa fa-star x-unstar"></i>
+                {{ else }}
+                  <i class="fa fa-star-o x-star"></i>
+                {{ end }}
+              </td>
+              <td class="o">
+                <div>
+                    <p class="text">
+                      {{- if and (eq ($.Query.Get "f") "o") ($.Query.Get "to") -}}
+                        {{ renderhl .Text ($.Query.Get "to") }}
+                      {{- else -}}
+                        {{ render .Text }}
+                      {{- end -}}
+                    </p>
+                    <div class="toolbox">
+                      <i class="fa fa-caret-left x-expand"></i>
+                      <i class="fa fa-pencil-square-o x-edit-orig"></i>
+                      <i class="fa fa-plus x-add-orig"></i>
+                      <i class="fa fa-times x-remove-orig"></i>
+                    </div>
+                </div>
+                <a class="permalink" href="/book/{{ $.ID }}/{{ .ID }}">#</a>
+              </td>
+              <td>
+                <i class="fa fa-arrow-right x-translate"></i>
+              </td>
+              <td class="t">
+                {{ range .Versions }}
+                  <div id="v{{ .ID }}">
+                    <p class="text">
+                      {{- if and (eq ($.Query.Get "f") "t") ($.Query.Get "tt") -}}
+                        {{ renderhl .Text ($.Query.Get "tt") }}
+                      {{- else -}}
+                        {{ render .Text }}
+                      {{- end -}}
+                    </p>
+                    <div class="toolbox">
+                      <i class="fa fa-pencil-square-o x-edit"></i>
+                      <i class="fa fa-times x-remove"></i>
+                    </div>
+                  </div>
+                {{ end }}
+              </td>
+              <td>
+                {{ if .Comment }}
+                  <i class="fa fa-comment x-comment" data-comment="{{ render .Comment }}"></i>
+                {{ else }}
+                  <i class="fa fa-comment-o x-comment"></i>
+                {{ end }}
+              </td>
+            </tr>
+          {{ end }}
+        </tbody>
+      </table>
+
+      {{ .Pagination.RenderPrevNextButtons }}
+    </div>
+  </body>
+</html>
+<!-- vim: set sw=2 ts=2 sts=2 et: -->

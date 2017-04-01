@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <style>.list-group-item { border: none !important; }</style>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <script src="/js/remove-book.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Remove translations</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li class="active">
+            <a href="/remove">Remove translations</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      <ul class="list-group">
+        {{ range . }}
+          <li class="list-group-item">
+            <label>
+              <input name="book_id" type="radio" value="{{ .ID }}">
+              {{ .Title }}
+            </label>
+          </li>
+        {{ end }}
+      </ul>
+
+      <button disabled="true" type="button" class="btn btn-danger pull-right button-remove">
+        Remove
+      </button>
+    </div>
+  </body>
+</html>

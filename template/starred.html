@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <style>.list-group-item { border: none !important; }</style>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/starred.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bookmarks</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li class="active">
+            <a href="/starred">Bookmarks</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      {{ if . }}
+        <ul class="list-group starred">
+          {{ range . }}
+            <li class="list-group-item">
+              <i class="fa fa-lg fa-star x-unstar" data-book_id="{{ .BookID }}" data-fragment_id="{{ .FragmentID }}"></i>
+              <a href="/book/{{ .BookID }}/{{ .FragmentID }}">
+                {{ .BookTitle }}
+              </a>
+              (<time datetime="{{ rfc3339 .Created }}">
+                {{- pretty .Created -}}
+              </time>)
+              <br>
+              <blockquote>
+                {{ render .Fragment }}
+              </blockquote>
+            </li>
+          {{ end }}
+        </ul>
+      {{ else }}
+        <p style="margin-top: 20px;">
+          Star one or more fragments first.
+        </p>
+      {{ end }}
+    </div>
+  </body>
+</html>

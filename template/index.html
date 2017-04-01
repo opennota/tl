@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+    <!-- editable titles -->
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap-editable.css">
+    <script src="/js/bootstrap-editable.min.js"></script>
+    <script src="/js/editable-title.js"></script>
+    <script id="editable-buttons-tmpl" type="text/template">
+      <button type="submit" class="btn btn-primary btn-sm editable-submit">
+        <i class="fa fa-check"></i>
+      </button>
+      <button type="button" class="btn btn-default btn-sm editable-cancel">
+        <i class="fa fa-times"></i>
+      </button>
+    </script>
+    <!-- / editable titles -->
+  </head>
+  <body>
+    <div class="container">
+      <h1>Translations</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="/">Index</a>
+          </li>
+          {{ if . }}
+            <li>
+              <a href="/starred">Bookmarks</a>
+            </li>
+          {{ end }}
+          <li>
+            <a href="/admin">Admin</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      <div class="btn-group">
+        <a href="/add" type="button" class="btn btn-default">Add</a>
+        {{ if . }}
+          <a href="/remove" type="button" class="btn btn-default button-remove">Remove</a>
+        {{ end }}
+      </div>
+
+      {{ if . }}
+        <table class="table table-condensed table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Translation</th>
+              <th>Complete</th>
+              <th>Last activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range . }}
+              <tr {{ if and (eq .FragmentsTranslated .FragmentsTotal) (gt .FragmentsTranslated 0) }}class="success"{{ end }}>
+                <td>
+                  <a class="title" href="/book/{{ .ID }}">{{ .Title }}</a>
+                  <i class="edit-title fa fa-pencil"></i>
+                </td>
+                <td>
+                  {{ pct .FragmentsTranslated .FragmentsTotal }}%
+                  ({{ .FragmentsTranslated }} / {{ .FragmentsTotal }})
+                </td>
+                <td>
+                  {{ if not .LastActivity.IsZero }}
+                    <time datetime="{{ rfc3339 .LastActivity }}">
+                      {{ pretty .LastActivity }}
+                    </time>
+                  {{ end }}
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      {{ else }}
+        <p style="margin-top: 20px;">
+          There are no translations yet.
+          <a href="/add">Want to add one?</a>
+        </p>
+      {{ end }}
+    </div>
+  </body>
+</html>
