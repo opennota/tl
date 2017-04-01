@@ -202,8 +202,14 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "POST":
-		title := strings.TrimSpace(r.FormValue("title"))
-		content := strings.TrimSpace(r.FormValue("content"))
+		err := r.ParseMultipartForm(32 * 1024 * 1024)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+
+		title := strings.TrimSpace(r.PostFormValue("title"))
+		content := strings.TrimSpace(r.PostFormValue("content"))
 		if title == "" || content == "" {
 			sess, _ := store.Get(r, "tl_sess")
 			if title == "" {

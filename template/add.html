@@ -32,7 +32,7 @@
         </div>
       {{ end }}
 
-      <form class="form-horizontal" action="/add" method="POST">
+      <form class="form-horizontal" action="/add" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="title" class="control-label">Title:</label>
           <input id="title" name="title" type="text" class="form-control" placeholder="New translation" value="{{ .Title }}" autofocus>
