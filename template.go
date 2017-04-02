@@ -49,7 +49,7 @@ var (
 
 func mustParse(name string) *template.Template {
 	name = "/template/" + name + ".html"
-	f, err := FS(true).Open(name)
+	f, err := FS(false).Open(name)
 	if err != nil {
 		log.Fatalf("mustParse: cannot open %q: %v", name, err)
 	}

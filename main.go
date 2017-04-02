@@ -77,7 +77,7 @@ func main() {
 	r.HandleFunc("/book/{book_id:[0-9]+}/{fragment_id:[0-9]+}/{version_id:[0-9]+}", app.RemoveVersion).
 		Methods("DELETE")
 
-	r.Handle("/{_:css|js|fonts}/{.*}", http.FileServer(FS(true))).Methods("GET")
+	r.Handle("/{_:css|js|fonts}/{.*}", http.FileServer(FS(false))).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(*addr, r))
 }
