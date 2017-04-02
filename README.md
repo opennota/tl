@@ -7,6 +7,8 @@ tl [![License](http://img.shields.io/:license-agpl3-blue.svg)](http://www.gnu.or
 
     go get github.com/opennota/tl
 
+Or download a compiled binary from the [Releases](https://github.com/opennota/tl/releases) page.
+
 ## Usage
 
     tl -http :1337 -db /path/to/tl.db
