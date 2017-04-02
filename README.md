@@ -3,7 +3,14 @@ tl [![License](http://img.shields.io/:license-agpl3-blue.svg)](http://www.gnu.or
 
 ![Screencast](/screencast.gif)
 
-## Install
+## Installation
 
     go get github.com/opennota/tl
+
+## Usage
+
+    tl -http :1337 -db /path/to/tl.db
+
+- `-http :1337` - listen on port 1337 (by default port 3000 or $PORT on localhost)
+- `-db /path/to/tl.db` - path to the translations database (by default `tl.db` in the current directory)
 
