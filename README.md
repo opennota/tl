@@ -1,4 +1,4 @@
-tl [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+tl [![License](http://img.shields.io/:license-agpl3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 ==
 
 ![Screencast](/screencast.gif)
