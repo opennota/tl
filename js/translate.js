@@ -321,7 +321,7 @@
         $newRow.find('td:last-child').html('<i class="fa fa-comment-o x-comment"></i>');
         let $html = $($('#orig-tmpl').html());
         $html.find('.text').html(data.text);
-        $html.filter('.permalink').attr('href', '/book/' + book_id + '/' + data.id);
+        $html = $html.add('<a class="permalink" href="/book/' + book_id + '/' + data.id + '">#</a>');
         $newRow.find('td.o > form').replaceWith($html);
         $newRow.removeClass('editing').attr('id', 'f' + data.id);
         updateProgress(fragments_total+1, fragments_translated);
