@@ -297,19 +297,19 @@
               </td>
               <td class="o">
                 <div>
-                    <p class="text">
-                      {{- if and (eq ($.Query.Get "f") "o") ($.Query.Get "to") -}}
-                        {{ renderhl .Text ($.Query.Get "to") }}
-                      {{- else -}}
-                        {{ render .Text }}
-                      {{- end -}}
-                    </p>
-                    <div class="toolbox">
-                      <i class="fa fa-caret-left x-expand"></i>
-                      <i class="fa fa-pencil-square-o x-edit-orig"></i>
-                      <i class="fa fa-plus x-add-orig"></i>
-                      <i class="fa fa-times x-remove-orig"></i>
-                    </div>
+                  <p class="text">
+                    {{- if and (eq ($.Query.Get "f") "o") ($.Query.Get "to") -}}
+                      {{ renderhl .Text ($.Query.Get "to") }}
+                    {{- else -}}
+                      {{ render .Text }}
+                    {{- end -}}
+                  </p>
+                  <div class="toolbox">
+                    <i class="fa fa-caret-left x-expand"></i>
+                    <i class="fa fa-pencil-square-o x-edit-orig"></i>
+                    <i class="fa fa-plus x-add-orig"></i>
+                    <i class="fa fa-times x-remove-orig"></i>
+                  </div>
                 </div>
                 <a class="permalink" href="/book/{{ $.ID }}/{{ .ID }}">#</a>
               </td>
