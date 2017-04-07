@@ -134,7 +134,7 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 		pg := Pagination{
 			url:          r.URL,
 			PageNumber:   page,
-			TotalItems:   len(book.FragmentsIDs),
+			TotalItems:   len(book.Fragments),
 			itemsPerPage: size,
 		}
 
