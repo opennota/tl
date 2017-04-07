@@ -114,9 +114,21 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 		case "2":
 			book, err = a.db.BookWithTranslations(bid, off, size, fWithTwoOrMoreVersions)
 		case "o":
-			book, err = a.db.BookWithTranslations(bid, off, size, fOriginalContains, r.FormValue("to"))
+			what := r.FormValue("to")
+			if what == "" {
+				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				return
+
+			}
+			book, err = a.db.BookWithTranslations(bid, off, size, fOriginalContains, what)
 		case "t":
-			book, err = a.db.BookWithTranslations(bid, off, size, fTranslationContains, r.FormValue("tt"))
+			what := r.FormValue("tt")
+			if what == "" {
+				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				return
+
+			}
+			book, err = a.db.BookWithTranslations(bid, off, size, fTranslationContains, what)
 		case "l":
 			book, err = a.db.BookWithTranslations(bid, off, size, fOriginalLength, r.FormValue("comp"), r.FormValue("n"), r.FormValue("unit"))
 		default:
