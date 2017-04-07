@@ -123,14 +123,14 @@ func insertSoftBreaks(s string) string {
 	})
 }
 
+var nl2br = strings.NewReplacer("\n", "<br>\n")
+
 func render(s string) template.HTML {
 	s = html.EscapeString(s)
-	s = strings.Replace(s, "\n", "<br>\n", -1)
+	s = nl2br.Replace(s)
 	s = insertSoftBreaks(s)
 	return template.HTML(s)
 }
-
-var nl2br = strings.NewReplacer("\n", "<br>\n")
 
 func renderhl(s, what string) template.HTML {
 	r := regexp.MustCompile("(?i)" + regexp.QuoteMeta(what))
