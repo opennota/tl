@@ -10,6 +10,7 @@ install:
   - go get github.com/gorilla/mux
   - go get github.com/gorilla/securecookie
   - go get github.com/gorilla/sessions
+  - go get github.com/opennota/substring
   - go build ./...
 
 script:
