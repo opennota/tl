@@ -22,11 +22,11 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
-	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/boltdb/bolt"
+	"github.com/opennota/substring"
 )
 
 var (
@@ -214,6 +214,11 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 			size = len(book.FragmentsIDs)
 		}
 
+		var m *substring.Matcher
+		if filter == fOriginalContains || filter == fTranslationContains {
+			m = substring.NewMatcher(filterArg[0])
+		}
+
 		if filter != fNone && filter != fTranslationContains {
 			fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 			filtered := book.FragmentsIDs[:0]
@@ -273,7 +278,7 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 					if err := json.Unmarshal(data, &tmp); err != nil {
 						return err
 					}
-					if !strings.Contains(tmp.Text, filterArg[0]) {
+					if !m.Match(tmp.Text) {
 						continue
 					}
 					filtered = append(filtered, fid)
@@ -328,7 +333,7 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 					} else if !found {
 						continue
 					}
-					if filter == fTranslationContains && !strings.Contains(v.Text, filterArg[0]) {
+					if filter == fTranslationContains && !m.Match(v.Text) {
 						continue
 					}
 					f.Versions = append(f.Versions, v)

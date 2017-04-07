@@ -130,19 +130,23 @@ func render(s string) template.HTML {
 	return template.HTML(s)
 }
 
+var nl2br = strings.NewReplacer("\n", "<br>\n")
+
 func renderhl(s, what string) template.HTML {
-	ss := strings.Split(s, what)
-	whatho := html.EscapeString(what)
-	whatho = strings.Replace(whatho, "\n", "<br>\n", -1)
-	whatho = "<mark>" + whatho + "</mark>"
+	r := regexp.MustCompile("(?i)" + regexp.QuoteMeta(what))
+	idxs := r.FindAllStringIndex(s, -1)
+	i := 0
 	var buf bytes.Buffer
-	for i, s := range ss {
-		if i != 0 {
-			buf.WriteString(whatho)
-		}
-		s = html.EscapeString(s)
-		s = strings.Replace(s, "\n", "<br>\n", -1)
-		buf.WriteString(s)
+	for _, idx := range idxs {
+		from, to := idx[0], idx[1]
+		buf.WriteString(html.EscapeString(s[i:from]))
+		buf.WriteString("<mark>")
+		buf.WriteString(html.EscapeString(s[from:to]))
+		buf.WriteString("</mark>")
+		i = to
 	}
-	return template.HTML(insertSoftBreaks(buf.String()))
+	buf.WriteString(html.EscapeString(s[i:]))
+	s = nl2br.Replace(buf.String())
+	s = insertSoftBreaks(s)
+	return template.HTML(s)
 }
