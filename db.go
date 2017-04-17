@@ -219,7 +219,10 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 			m = substring.NewMatcher(filterArg[0])
 		}
 
-		if filter != fNone && filter != fTranslationContains {
+		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
+		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
+
+		if filter != fNone {
 			fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 			filtered := book.FragmentsIDs[:0]
 
@@ -283,6 +286,25 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 					}
 					filtered = append(filtered, fid)
 				}
+			case fTranslationContains:
+				for _, fid := range book.FragmentsIDs {
+					var f Fragment
+					if _, err := unmarshal(fb, fid, &f); err != nil {
+						return err
+					}
+					for _, vid := range f.VersionsIDs {
+						var v TranslationVersion
+						if found, err := unmarshal(vb, vid, &v); err != nil {
+							return err
+						} else if !found {
+							continue
+						}
+						if m.Match(v.Text) {
+							filtered = append(filtered, fid)
+							break
+						}
+					}
+				}
 			case fOriginalLength:
 				compare := func(a, b int) bool { return a < b }
 				if filterArg[0] == "more" {
@@ -316,8 +338,6 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 			return nil
 		}
 
-		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
-		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
 		to := min(len(book.FragmentsIDs), from+size)
 		for _, fid := range book.FragmentsIDs[from:to] {
 			var f Fragment
