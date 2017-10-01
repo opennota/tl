@@ -5,7 +5,7 @@ tl [![License](http://img.shields.io/:license-agpl3-blue.svg)](http://www.gnu.or
 
 ## Installation
 
-    go get github.com/opennota/tl
+    go get -u github.com/opennota/tl
 
 Or download a pre-compiled binary from the [Releases](https://github.com/opennota/tl/releases) page.
 
