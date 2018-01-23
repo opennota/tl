@@ -317,7 +317,14 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = readTmpl.Execute(w, book)
+	err = readTmpl.Execute(w,
+		&struct {
+			*Book
+			LastVariants bool
+		}{
+			&book,
+			r.FormValue("last") != "",
+		})
 	if err != nil {
 		logError(err)
 	}

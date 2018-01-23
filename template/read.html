@@ -23,12 +23,30 @@
         </ul>
       </nav>
 
+      <div style="float: right;">
+        {{ if .LastVariants }}
+          <a href="/book/{{ .ID }}/read">First</a>
+        {{ else }}
+          First
+        {{ end }}
+        |
+        {{ if .LastVariants }}
+          Last
+        {{ else }}
+          <a href="/book/{{ .ID }}/read?last=1">Last</a>
+        {{ end }}
+      </div>
+
       <br>
 
       {{ range .Fragments }}
         <p class="text">
           {{ if gt (len .Versions) 0 }}
-            {{ render ((index .Versions 0).Text) }}
+            {{ if $.LastVariants }}
+              {{ render ((index .Versions (dec (len .Versions))).Text) }}
+            {{ else }}
+              {{ render ((index .Versions 0).Text) }}
+            {{ end }}
           {{ else }}
             {{ render .Text }}
           {{ end }}
