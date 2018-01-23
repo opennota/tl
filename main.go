@@ -50,6 +50,7 @@ func main() {
 
 	r.HandleFunc("/", app.Index).Methods("GET")
 	r.HandleFunc("/add", app.AddBook).Methods("GET", "POST")
+	r.HandleFunc("/add/csv", app.AddBook).Methods("POST")
 	r.HandleFunc("/remove", app.RemoveBook).Methods("GET")
 	r.HandleFunc("/starred", app.Starred).Methods("GET")
 	r.HandleFunc("/admin", app.Admin).Methods("GET")

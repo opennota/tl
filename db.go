@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 	"unicode/utf8"
 
@@ -428,6 +429,72 @@ func (db *DB) AddBook(title string, fragments []string) (uint64, error) {
 			Created:             now,
 			FragmentsTotal:      len(fragments),
 			FragmentsTranslated: 0,
+			FragmentsIDs:        ids,
+		}); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return bid, nil
+}
+
+func (db *DB) AddTranslatedBook(title string, fragments [][]string) (uint64, error) {
+	now := time.Now()
+	var bid uint64
+	err := db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("index"))
+		bid, _ = b.NextSequence()
+
+		fb, err := tx.Bucket([]byte("fragments")).CreateBucket(encode(bid))
+		if err != nil {
+			return err
+		}
+		vb, err := tx.Bucket([]byte("versions")).CreateBucket(encode(bid))
+		if err != nil {
+			return err
+		}
+
+		fragmentsTranslated := 0
+		ids := make([]uint64, len(fragments))
+		for i := range fragments {
+			var versionIDs []uint64
+			translationText := strings.TrimSpace(fragments[i][1])
+			if translationText != "" {
+				vid, _ := vb.NextSequence()
+				vers := TranslationVersion{
+					ID:      vid,
+					Created: now,
+					Updated: now,
+					Text:    translationText,
+				}
+				if err := marshal(vb, vid, &vers); err != nil {
+					return err
+				}
+				versionIDs = []uint64{vid}
+				fragmentsTranslated++
+			}
+			fid, _ := fb.NextSequence()
+			ids[i] = fid
+			if err := marshal(fb, fid, Fragment{
+				ID:          fid,
+				Created:     now,
+				Updated:     now,
+				Text:        strings.TrimSpace(fragments[i][0]),
+				VersionsIDs: versionIDs,
+			}); err != nil {
+				return err
+			}
+		}
+
+		if err := marshal(b, bid, Book{
+			ID:                  bid,
+			Title:               title,
+			Created:             now,
+			FragmentsTotal:      len(fragments),
+			FragmentsTranslated: fragmentsTranslated,
 			FragmentsIDs:        ids,
 		}); err != nil {
 			return err

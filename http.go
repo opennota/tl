@@ -200,14 +200,20 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		title, _ := sess.Values["title"].(string)
 		delete(sess.Values, "title")
 		sess.Save(r, w)
+		uploadType := r.FormValue("type")
+		if uploadType != "plaintext" && uploadType != "csv" {
+			uploadType = "plaintext"
+		}
 
 		w.Header().Set("Content-Type", "text/html")
 		err := addTmpl.Execute(w, struct {
 			Errors []interface{}
 			Title  string
+			Type   string
 		}{
 			errors,
 			title,
+			uploadType,
 		})
 		if err != nil {
 			logError(err)
@@ -221,25 +227,58 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		title := strings.TrimSpace(r.PostFormValue("title"))
-		content := strings.TrimSpace(r.PostFormValue("content"))
-		if title == "" || content == "" {
+		if title == "" {
 			sess, _ := store.Get(r, "tl_sess")
-			if title == "" {
-				sess.AddFlash("Title must not be empty!")
-			}
-			if content == "" {
-				sess.AddFlash("Content must not be empty!")
-			}
-			sess.Values["title"] = title
+			sess.AddFlash("Title must not be empty!")
 			sess.Save(r, w)
-			http.Redirect(w, r, "/add", http.StatusFound)
+			http.Redirect(w, r, r.URL.Path, http.StatusFound)
 			return
 		}
 
-		bid, err := a.db.AddBook(title, split(content))
-		if err != nil {
-			internalError(w, err)
-			return
+		var bid uint64
+		switch r.URL.Path {
+		case "/add":
+			content := strings.TrimSpace(r.PostFormValue("content"))
+			if content == "" {
+				sess, _ := store.Get(r, "tl_sess")
+				sess.AddFlash("Content must not be empty!")
+				sess.Values["title"] = title
+				sess.Save(r, w)
+				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				return
+			}
+
+			bid, err = a.db.AddBook(title, split(content))
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+
+		case "/add/csv":
+			f, _, err := r.FormFile("csvfile")
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+			defer f.Close()
+
+			csvr := csv.NewReader(f)
+			csvr.FieldsPerRecord = 2
+			records, err := csvr.ReadAll()
+			if err != nil {
+				sess, _ := store.Get(r, "tl_sess")
+				sess.AddFlash("Could not parse CSV file.")
+				sess.Values["title"] = title
+				sess.Save(r, w)
+				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				return
+			}
+
+			bid, err = a.db.AddTranslatedBook(title, records)
+			if err != nil {
+				internalError(w, err)
+				return
+			}
 		}
 
 		http.Redirect(w, r, "/book/"+fmt.Sprint(bid), http.StatusFound)
