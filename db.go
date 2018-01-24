@@ -978,7 +978,10 @@ func (db *DB) Scratchpad(bid uint64) (*Book, *Scratchpad, error) {
 func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 	now := time.Now()
 	err := db.Update(func(tx *bolt.Tx) error {
-		b, _ := tx.CreateBucketIfNotExists([]byte("scratchpad"))
+		b, err := tx.CreateBucketIfNotExists([]byte("scratchpad"))
+		if err != nil {
+			return err
+		}
 		var sp Scratchpad
 		if found, err := unmarshal(b, bid, &sp); err != nil {
 			return err
