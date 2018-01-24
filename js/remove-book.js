@@ -13,7 +13,10 @@
       let dlg = bootbox.confirm({
         message: '<b>Remove the following book?</b><br><br>' + title,
         buttons: {
-          confirm: { label: 'Remove', className: 'btn-danger' },
+          confirm: {
+            label: 'Remove',
+            className: 'btn-danger'
+          },
         },
         callback: result => {
           if (!result) return;
@@ -29,3 +32,4 @@
     });
   });
 })();
+// vim: et sw=2
