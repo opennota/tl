@@ -37,7 +37,7 @@
       {{ end }}
 
       <div class="row">
-        <form id="edit-form" class="form" action="/book/{{ .Book.ID }}/scratchpad" method="POST"
+        <form action="/book/{{ .Book.ID }}/scratchpad" method="POST"
           style="{{ if not .Edit }}display: none;{{ end }}">
           <div class="form-group">
             <textarea id="markup" name="text" class="form-control" rows="10" autofocus>
