@@ -80,6 +80,13 @@ type StarredFragment struct {
 	Fragment   string    `json:"fragment"`
 }
 
+type Scratchpad struct {
+	ID      uint64    `json:"id"`
+	Created time.Time `json:"created"`
+	Updated time.Time `json:"updated"`
+	Text    string    `json:"text"`
+}
+
 func encode(v uint64) []byte {
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, v)
@@ -947,4 +954,44 @@ func (db *DB) RemoveVersion(bid, fid, vid uint64) (int, error) {
 		return 0, err
 	}
 	return fragmentsTranslated, nil
+}
+
+func (db *DB) Scratchpad(bid uint64) (*Book, *Scratchpad, error) {
+	book, err := db.BookByID(bid)
+	if err != nil {
+		return nil, nil, err
+	}
+	var sp Scratchpad
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("scratchpad"))
+		if b == nil {
+			return nil
+		}
+		if _, err := unmarshal(b, bid, &sp); err != nil {
+			return err
+		}
+		return nil
+	})
+	return &book, &sp, err
+}
+
+func (db *DB) UpdateScratchpad(bid uint64, text string) error {
+	now := time.Now()
+	err := db.Update(func(tx *bolt.Tx) error {
+		b, _ := tx.CreateBucketIfNotExists([]byte("scratchpad"))
+		var sp Scratchpad
+		if found, err := unmarshal(b, bid, &sp); err != nil {
+			return err
+		} else if !found {
+			sp.ID = bid
+			sp.Created = now
+		}
+		sp.Updated = now
+		sp.Text = text
+		if err := marshal(b, bid, &sp); err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
 }

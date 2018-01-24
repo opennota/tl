@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/markdown-it.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        let md = markdownit({
+            linkify: true,
+            typographer: true,
+            quotes: '«»„“'
+        });
+        $('#markdown-it').html(md.render($('#markup').text()));
+        $('#markup')
+          .on('change keyup paste', e => {
+              $('#markdown-it').html(md.render(e.target.value));
+          })
+          .on('keydown', e => {
+              if (e.ctrlKey && e.which == 13) {
+                  $('#button-save').click();
+              }
+          });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ .Book.Title }} - Scratchpad</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li>
+            <a href="/book/{{ .Book.ID }}">{{ .Book.Title }}</a>
+          </li>
+          <li class="active">
+            <a href="/book/{{ .Book.ID }}/scratchpad">Scratchpad</a>
+          </li>
+        </ul>
+      </nav>
+
+      <br>
+
+      {{ if not .Edit }}
+        <form action="/book/{{ .Book.ID }}/scratchpad" method="GET">
+          <input type="hidden" name="edit" value="1"></input>
+          <button type="submit" class="btn btn-default">Edit</button>
+        </form>
+        <br>
+      {{ end }}
+
+      <div class="row">
+        <form id="edit-form" class="form" action="/book/{{ .Book.ID }}/scratchpad" method="POST"
+          style="{{ if not .Edit }}display: none;{{ end }}">
+          <div class="form-group">
+            <textarea id="markup" name="text" class="form-control" rows="10" autofocus>
+              {{- .Text -}}
+            </textarea>
+          </div>
+          <div class="form-group">
+            <button id="button-save" type="submit" class="btn btn-default pull-right">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="markdown-it"></div>
+
+    </div>
+  </body>
+</html>

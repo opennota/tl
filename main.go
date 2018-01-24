@@ -59,6 +59,8 @@ func main() {
 		Methods("GET", "POST", "DELETE")
 	r.HandleFunc(`/book/{book_id:[0-9]+}/read`, app.ReadBook).
 		Methods("GET")
+	r.HandleFunc("/book/{book_id:[0-9]+}/scratchpad", app.Scratchpad).
+		Methods("GET", "POST")
 	r.HandleFunc(`/book/{book_id:[0-9]+}/export`, app.ExportBook).
 		Methods("GET")
 	r.HandleFunc("/book/{book_id:[0-9]+}/{fragment_id:[0-9]+}", app.Fragment).

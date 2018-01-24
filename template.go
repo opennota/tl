@@ -35,13 +35,14 @@ var (
 		"render":   render,
 		"renderhl": renderhl,
 	}
-	indexTmpl   = mustParse("index")
-	addTmpl     = mustParse("add")
-	bookTmpl    = mustParse("book")
-	removeTmpl  = mustParse("remove")
-	starredTmpl = mustParse("starred")
-	readTmpl    = mustParse("read")
-	adminTmpl   = mustParse("admin")
+	indexTmpl      = mustParse("index")
+	addTmpl        = mustParse("add")
+	bookTmpl       = mustParse("book")
+	removeTmpl     = mustParse("remove")
+	starredTmpl    = mustParse("starred")
+	readTmpl       = mustParse("read")
+	adminTmpl      = mustParse("admin")
+	scratchpadTmpl = mustParse("scratchpad")
 
 	rBigWords = regexp.MustCompile(`[^\s<>&;]{32,}`)
 	r16Chars  = regexp.MustCompile(`.{16}`)

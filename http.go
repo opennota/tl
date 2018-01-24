@@ -711,3 +711,51 @@ func (a *App) Backup(w http.ResponseWriter, r *http.Request) {
 		logError(err)
 	}
 }
+
+func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	bid, err := Uint64(vars["book_id"])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		edit := r.FormValue("edit") != ""
+		book, sp, err := a.db.Scratchpad(bid)
+		if err != nil {
+			if book == nil {
+				http.NotFound(w, r)
+				return
+			}
+			internalError(w, err)
+			return
+		}
+		if sp.ID == 0 {
+			edit = true
+		}
+
+		err = scratchpadTmpl.Execute(w,
+			&struct {
+				Book *Book
+				*Scratchpad
+				Edit bool
+			}{
+				book,
+				sp,
+				edit,
+			})
+		if err != nil {
+			logError(err)
+		}
+
+	case "POST":
+		text := r.FormValue("text")
+		if err := a.db.UpdateScratchpad(bid, text); err != nil {
+			internalError(w, err)
+			return
+		}
+		http.Redirect(w, r, r.URL.Path, http.StatusFound)
+	}
+}
