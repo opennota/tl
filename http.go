@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"regexp"
@@ -201,7 +202,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		delete(sess.Values, "title")
 		sess.Save(r, w)
 		uploadType := r.FormValue("type")
-		if uploadType != "plaintext" && uploadType != "csv" {
+		if !(uploadType == "plaintext" || uploadType == "csv" || uploadType == "json") {
 			uploadType = "plaintext"
 		}
 
@@ -227,7 +228,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		title := strings.TrimSpace(r.PostFormValue("title"))
-		if title == "" {
+		if title == "" && r.URL.Path != "/add/json" {
 			sess, _ := store.Get(r, "tl_sess")
 			sess.AddFlash("Title must not be empty!")
 			sess.Save(r, w)
@@ -275,6 +276,26 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 			}
 
 			bid, err = a.db.AddTranslatedBook(title, records)
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+
+		case "/add/json":
+			f, _, err := r.FormFile("jsonfile")
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+			defer f.Close()
+
+			data, err := ioutil.ReadAll(f)
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+
+			bid, err = a.db.ImportBookFromJSON(data)
 			if err != nil {
 				internalError(w, err)
 				return
@@ -332,7 +353,7 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 	format := r.FormValue("f")
-	if !(format == "plaintext" || format == "csv" || format == "jsonl") {
+	if !(format == "plaintext" || format == "csv" || format == "jsonl" || format == "json") {
 		http.NotFound(w, r)
 		return
 	}
@@ -341,6 +362,22 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 	bid, err := Uint64(vars["book_id"])
 	if err != nil {
 		http.NotFound(w, r)
+		return
+	}
+
+	if format == "json" {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Content-Disposition", `attachment; filename="book.json"`)
+		data, err := a.db.ExportBookToJSON(bid)
+		if err != nil {
+			if err == ErrNotFound {
+				http.NotFound(w, r)
+			} else {
+				internalError(w, err)
+			}
+			return
+		}
+		w.Write(data)
 		return
 	}
 

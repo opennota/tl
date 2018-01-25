@@ -40,6 +40,9 @@
         <li class="{{ if eq .Type "csv" }}active{{ end }}">
           <a href="/add?type=csv">CSV</a>
         </li>
+        <li class="{{ if eq .Type "json" }}active{{ end }}">
+          <a href="/add?type=json">JSON</a>
+        </li>
       </ul>
 
       {{ if eq .Type "plaintext" }}
@@ -60,14 +63,17 @@
         </form>
       {{ end }}
 
-      {{ if eq .Type "csv" }}
-        <form class="form-horizontal" action="/add/csv" method="POST" enctype="multipart/form-data">
+      {{ if or (eq .Type "csv") (eq .Type "json") }}
+        <form class="form-horizontal" action="/add/{{ .Type }}" method="POST" enctype="multipart/form-data">
+          {{ if ne .Type "json" }}
+            <div class="form-group">
+              <label for="title" class="control-label">Title:</label>
+              <input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{ .Title }}" autofocus>
+            </div>
+          {{ else }}<br>
+          {{ end }}
           <div class="form-group">
-            <label for="title" class="control-label">Title:</label>
-            <input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{ .Title }}" autofocus>
-          </div>
-          <div class="form-group">
-            <input name="csvfile" type="file">
+            <input name="{{ .Type }}file" type="file">
           </div>
           <div class="form-group">
             <button type="submit" class="btn btn-default pull-right">

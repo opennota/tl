@@ -134,6 +134,10 @@ func OpenDatabase(path string, mode os.FileMode, options *bolt.Options) (DB, err
 		if err != nil {
 			return err
 		}
+		_, err = tx.CreateBucketIfNotExists([]byte("scratchpad"))
+		if err != nil {
+			return err
+		}
 		return nil
 	}); err != nil {
 		return DB{}, err
@@ -231,7 +235,6 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
 
 		if filter != fNone {
-			fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 			filtered := book.FragmentsIDs[:0]
 
 			switch filter {
@@ -978,10 +981,7 @@ func (db *DB) Scratchpad(bid uint64) (*Book, *Scratchpad, error) {
 func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 	now := time.Now()
 	err := db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("scratchpad"))
-		if err != nil {
-			return err
-		}
+		b := tx.Bucket([]byte("scratchpad"))
 		var sp Scratchpad
 		if found, err := unmarshal(b, bid, &sp); err != nil {
 			return err
@@ -997,4 +997,170 @@ func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 		return nil
 	})
 	return err
+}
+
+func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
+	var data []byte
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("index"))
+		var book Book
+		if found, err := unmarshal(b, bid, &book); err != nil {
+			return err
+		} else if !found {
+			return ErrNotFound
+		}
+		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
+		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
+		bb := tx.Bucket([]byte("starred"))
+		fragments := make([]Fragment, 0, book.FragmentsTotal)
+		versions := make([]TranslationVersion, 0, book.FragmentsTranslated)
+		starred := []StarredFragment{}
+		for _, fid := range book.FragmentsIDs {
+			var f Fragment
+			if _, err := unmarshal(fb, fid, &f); err != nil {
+				return err
+			}
+			fragments = append(fragments, f)
+			for _, vid := range f.VersionsIDs {
+				var v TranslationVersion
+				if _, err := unmarshal(vb, vid, &v); err != nil {
+					return err
+				}
+				versions = append(versions, v)
+			}
+			if f.Starred {
+				sfid := make([]byte, 8*2)
+				binary.LittleEndian.PutUint64(sfid, bid)
+				binary.LittleEndian.PutUint64(sfid[8:], fid)
+				d := bb.Get(sfid)
+				if d == nil {
+					f.Starred = false
+				} else {
+					var sf StarredFragment
+					if err := json.Unmarshal(d, &sf); err != nil {
+						return err
+					}
+					starred = append(starred, sf)
+				}
+			}
+		}
+
+		var sp *Scratchpad
+		spb := tx.Bucket([]byte("scratchpad"))
+		if _, err := unmarshal(spb, bid, &sp); err != nil {
+			return err
+		}
+
+		var err error
+		data, err = json.Marshal(&struct {
+			Book        `json:"book"`
+			Fragments   []Fragment           `json:"fragments"`
+			Starred     []StarredFragment    `json:"starred"`
+			Versions    []TranslationVersion `json:"versions"`
+			*Scratchpad `json:"scratchpad"`
+		}{
+			book,
+			fragments,
+			starred,
+			versions,
+			sp,
+		})
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func (db *DB) ImportBookFromJSON(data []byte) (uint64, error) {
+	var book Book
+	var fragments []Fragment
+	var starred []StarredFragment
+	var versions []TranslationVersion
+	var sp *Scratchpad
+	if err := json.Unmarshal(data, &struct {
+		Book       *Book
+		Fragments  *[]Fragment
+		Starred    *[]StarredFragment
+		Versions   *[]TranslationVersion
+		Scratchpad **Scratchpad
+	}{
+		&book,
+		&fragments,
+		&starred,
+		&versions,
+		&sp,
+	}); err != nil {
+		return 0, err
+	}
+	if err := db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("index"))
+		bid, _ := b.NextSequence()
+		book.ID = bid
+		fb, err := tx.Bucket([]byte("fragments")).CreateBucket(encode(bid))
+		if err != nil {
+			return err
+		}
+		vb, err := tx.Bucket([]byte("versions")).CreateBucket(encode(bid))
+		if err != nil {
+			return err
+		}
+
+		vmap := make(map[uint64]uint64)
+		for _, v := range versions {
+			vid, _ := vb.NextSequence()
+			vmap[v.ID] = vid
+			v.ID = vid
+			if err := marshal(vb, vid, &v); err != nil {
+				return err
+			}
+		}
+		fmap := make(map[uint64]uint64)
+		for i, f := range fragments {
+			fid, _ := fb.NextSequence()
+			fmap[f.ID] = fid
+			f.ID = fid
+			book.FragmentsIDs[i] = fid
+			for j, vid := range f.VersionsIDs {
+				f.VersionsIDs[j] = vmap[vid]
+			}
+			if err := marshal(fb, fid, &f); err != nil {
+				return err
+			}
+		}
+
+		if len(starred) > 0 {
+			b := tx.Bucket([]byte("starred"))
+			sfid := make([]byte, 8*2)
+			for _, f := range starred {
+				f.BookID = bid
+				f.FragmentID = fmap[f.FragmentID]
+				binary.LittleEndian.PutUint64(sfid, bid)
+				binary.LittleEndian.PutUint64(sfid[8:], f.FragmentID)
+				if data, err := json.Marshal(&f); err != nil {
+					return err
+				} else if err := b.Put(sfid, data); err != nil {
+					return err
+				}
+			}
+		}
+
+		if err := marshal(b, bid, &book); err != nil {
+			return err
+		}
+
+		if sp != nil {
+			sp.ID = bid
+			b := tx.Bucket([]byte("scratchpad"))
+			if err := marshal(b, bid, sp); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return 0, err
+	}
+	return book.ID, nil
 }
