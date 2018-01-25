@@ -394,7 +394,7 @@
       .on('click', 'label', e => {
         $(e.target).closest('label').find('[type="radio"]').prop('checked', true);
       })
-      .on('click', 'select', e => e.stopPropagation());
+      .on('click', '.dropdown-menu', e => e.stopPropagation());
     $('#orig_contains, #trans_contains').click(e => $(e.target).next().focus());
     $('.fa-window-restore').click(toggleFluid);
     if (location.hash) {
