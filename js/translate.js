@@ -4,6 +4,7 @@
   let cancelEdit = null;
   let cancelEditOrig = null;
   let $previous = null;
+
   function updateProgress(total, translated) {
     if (total != fragments_total || translated != fragments_translated) {
       fragments_total = total;
@@ -14,6 +15,7 @@
     }
     $('.orig-empty-alert').toggle(!total);
   }
+
   function edit(e) {
     $previous = null;
     if (cancelEdit) cancelEdit();
@@ -108,6 +110,7 @@
     }
     $textarea.autoGrow().focus();
   }
+
   function comment(e) {
     let $target = $(e.target);
     let closePopover = () => {
@@ -170,12 +173,17 @@
       $div.html(md.render(String(text)));
     }
     $target
-      .popover({placement: 'left', html: true, content: $form})
+      .popover({
+        placement: 'left',
+        html: true,
+        content: $form
+      })
       .popover('show');
     if (!text) {
       $div.dblclick();
     }
   }
+
   function remove(e) {
     let $div = $(e.target).closest('div[id^=v]');
     let vid = $div.attr('id').substr(1);
@@ -184,7 +192,10 @@
     let dlg = bootbox.confirm({
       message: '<b>Remove the following version?</b><br><br><blockquote>' + text + '</blockquote>',
       buttons: {
-        confirm: { label: 'Remove', className: 'btn-danger' },
+        confirm: {
+          label: 'Remove',
+          className: 'btn-danger'
+        },
       },
       callback: result => {
         if (!result) return;
@@ -199,6 +210,7 @@
       }
     });
   }
+
   function star(e) {
     let $icon = $(e.target);
     let fid = $icon.closest('tr').attr('id').substr(1);
@@ -210,6 +222,7 @@
         .addClass('x-unstar fa-star');
     }).fail((xhr, status, err) => alert(err));
   }
+
   function unstar(e) {
     let $icon = $(e.target);
     let fid = $icon.closest('tr').attr('id').substr(1);
@@ -221,6 +234,7 @@
         .addClass('x-star fa-star-o');
     }).fail((xhr, status, err) => alert(err));
   }
+
   function toggleFluid() {
     let c = $('#container');
     if (c.hasClass('container-fluid')) {
@@ -229,6 +243,7 @@
       c.removeClass('container').addClass('container-fluid');
     }
   }
+
   function editOrig(e) {
     if (cancelEditOrig) cancelEditOrig();
     let $row = $(e.target).closest('tr');
@@ -270,6 +285,7 @@
     $div.replaceWith($form);
     $textarea.autoGrow().focus();
   }
+
   function removeOrig(e) {
     let $row = $(e.target).closest('tr');
     let fid = $row.attr('id').substr(1);
@@ -277,7 +293,10 @@
     let dlg = bootbox.confirm({
       message: '<b>Remove the following fragment?</b><br><br><blockquote>' + text + '</blockquote>',
       buttons: {
-        confirm: { label: 'Remove', className: 'btn-danger' },
+        confirm: {
+          label: 'Remove',
+          className: 'btn-danger'
+        },
       },
       callback: result => {
         if (!result) return;
@@ -287,11 +306,12 @@
         }).done((data) => {
           dlg.modal('hide');
           $row.remove();
-          updateProgress(fragments_total-1, data.fragments_translated);
+          updateProgress(fragments_total - 1, data.fragments_translated);
         }).fail((xhr, status, err) => alert(err));
       }
     });
   }
+
   function addOrig(e) {
     if (cancelEditOrig) cancelEditOrig();
     let $newRow = $($('#new-row-tmpl').html());
@@ -324,7 +344,7 @@
         $html = $html.add('<a class="permalink" href="/book/' + book_id + '/' + data.id + '">#</a>');
         $newRow.find('td.o > form').replaceWith($html);
         $newRow.removeClass('editing').attr('id', 'f' + data.id);
-        updateProgress(fragments_total+1, fragments_translated);
+        updateProgress(fragments_total + 1, fragments_translated);
       },
       error: data => {
         $submit.attr('disabled', false);
@@ -340,6 +360,7 @@
     }
     $textarea.autoGrow().focus();
   }
+
   function toggleOrigToolbox(e) {
     $('.translator').toggleClass('show-orig-toolbox');
     $.scrollTo($(e.target).closest('tr'));
