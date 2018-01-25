@@ -769,7 +769,7 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 			internalError(w, err)
 			return
 		}
-		if sp.ID == 0 {
+		if sp.ID == 0 || sp.Text == "" {
 			edit = true
 		}
 
