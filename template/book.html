@@ -243,7 +243,9 @@
             <div class="progress progress-striped">
               <div class="progress-bar progress-bar-success" style="width: {{ pct .FragmentsTranslated .FragmentsTotal }}%"></div>
               <span>
-                <i class="percent">{{ pct .FragmentsTranslated .FragmentsTotal }}</i>%
+                <i class="fraction" title="{{ .FragmentsTranslated }}/{{ .FragmentsTotal }}">
+                  <i class="percent">{{ pct .FragmentsTranslated .FragmentsTotal }}</i>%
+                </i>
                 -
                 <a href="/book/{{ .ID }}/read">Read</a>
               </span>

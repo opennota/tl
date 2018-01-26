@@ -12,6 +12,7 @@
       let pct = (total === 0) ? 0 : Math.floor(100 * translated / total);
       $('.progress-bar').attr('style', 'width:' + pct + '%');
       $('.progress .percent').text(pct);
+      $('.progress .fraction').attr('title', translated + '/' + total);
     }
     $('.orig-empty-alert').toggle(!total);
   }
