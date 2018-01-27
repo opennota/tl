@@ -319,7 +319,9 @@
                     <i class="fa fa-times x-remove-orig"></i>
                   </div>
                 </div>
-                <a class="permalink" href="/book/{{ $.ID }}/{{ .ID }}">#</a>
+                <a class="permalink" href="/book/{{ $.ID }}/{{ .ID }}">
+                  #{{ .SeqNum }}
+                </a>
               </td>
               <td>
                 <i class="fa fa-arrow-right x-translate"></i>

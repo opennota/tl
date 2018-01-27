@@ -63,6 +63,7 @@ type Fragment struct {
 	VersionsIDs []uint64  `json:"versions_ids"`
 
 	Versions []TranslationVersion `json:"-"`
+	SeqNum   int                  `json:"-"`
 }
 
 type TranslationVersion struct {
@@ -212,6 +213,15 @@ func wordCount(s string) int {
 	return len(rWord.FindAllStringIndex(s, -1))
 }
 
+func indexOf(a []uint64, x uint64) int {
+	for i, v := range a {
+		if v == x {
+			return i
+		}
+	}
+	return -1
+}
+
 func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind, filterArg ...string) (Book, error) {
 	var book Book
 	if err := db.View(func(tx *bolt.Tx) error {
@@ -233,9 +243,10 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 
 		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
+		origFragmentIDs := book.FragmentsIDs
 
 		if filter != fNone {
-			filtered := book.FragmentsIDs[:0]
+			filtered := make([]uint64, 0, len(book.FragmentsIDs))
 
 			switch filter {
 			case fUntranslated:
@@ -374,6 +385,8 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 			if filter == fTranslationContains && len(f.Versions) == 0 {
 				continue
 			}
+
+			f.SeqNum = 1 + indexOf(origFragmentIDs, f.ID)
 
 			book.Fragments = append(book.Fragments, f)
 		}
