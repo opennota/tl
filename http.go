@@ -353,9 +353,11 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 	format := r.FormValue("f")
-	if !(format == "plaintext" || format == "csv" || format == "jsonl" || format == "json") {
+	switch format {
+	default:
 		http.NotFound(w, r)
 		return
+	case "plaintext", "plaintext-orig", "csv", "jsonl", "json":
 	}
 
 	vars := mux.Vars(r)
@@ -401,6 +403,13 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 				t = f.Versions[0].Text
 			}
 			fmt.Fprintln(w, t)
+			w.Write([]byte{'\n'})
+		}
+	case "plaintext-orig":
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("Content-Disposition", `attachment; filename="book.txt"`)
+		for _, f := range book.Fragments {
+			fmt.Fprintln(w, f.Text)
 			w.Write([]byte{'\n'})
 		}
 	case "csv":
