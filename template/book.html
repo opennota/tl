@@ -111,9 +111,9 @@
     </script>
     <script>
       // strings to make linters happy
-      const book_id = "{{ .ID }}";
-      var fragments_total = "{{ .FragmentsTotal }}";
-      var fragments_translated = "{{ .FragmentsTranslated }}";
+      const book_id = +'{{ .ID }}';
+      var fragments_total = +'{{ .FragmentsTotal }}';
+      var fragments_translated = +'{{ .FragmentsTranslated }}';
     </script>
   </head>
   <body>
