@@ -318,7 +318,9 @@
                   <div class="toolbox">
                     <i class="fa fa-caret-left x-expand"></i>
                     <i class="fa fa-pencil-square-o x-edit-orig"></i>
-                    <i class="fa fa-plus x-add-orig"></i>
+                    {{ if not ($.Query.Get "f") }}
+                      <i class="fa fa-plus x-add-orig"></i>
+                    {{ end }}
                     <i class="fa fa-times x-remove-orig"></i>
                   </div>
                 </div>
