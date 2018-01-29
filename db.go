@@ -213,15 +213,6 @@ func wordCount(s string) int {
 	return len(rWord.FindAllStringIndex(s, -1))
 }
 
-func indexOf(a []uint64, x uint64) int {
-	for i, v := range a {
-		if v == x {
-			return i
-		}
-	}
-	return -1
-}
-
 func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind, filterArg ...string) (Book, error) {
 	var book Book
 	if err := db.View(func(tx *bolt.Tx) error {
@@ -386,7 +377,7 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 				continue
 			}
 
-			f.SeqNum = 1 + indexOf(origFragmentIDs, f.ID)
+			f.SeqNum = 1 + idx(origFragmentIDs, f.ID)
 
 			book.Fragments = append(book.Fragments, f)
 		}
