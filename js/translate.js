@@ -1,4 +1,4 @@
-/* global book_id, fragments_total:true, fragments_translated:true */
+/* global Cookies, book_id, fragments_total:true, fragments_translated:true */
 (function() {
   'use strict';
   let cancelEdit = null;
@@ -364,6 +364,8 @@
 
   function toggleOrigToolbox(e) {
     $('.translator').toggleClass('show-orig-toolbox');
+    Cookies.set('show-orig-toolbox',
+      $('.translator').hasClass('show-orig-toolbox') ? 1 : 0);
     $.scrollTo($(e.target).closest('tr'));
   }
   $(document).ready(() => {

@@ -10,6 +10,7 @@
     <script src="/js/jquery.form.js"></script>
     <script src="/js/jquery.autogrowtextarea.min.js"></script>
     <script src="/js/jquery.scrollTo.min.js"></script>
+    <script src="/js/js.cookie.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/bootbox.min.js"></script>
     <script src="/js/markdown-it.min.js"></script>
@@ -286,7 +287,7 @@
         <a href="#">Add a fragment.</a>
       </div>
 
-      <table class="table translator">
+      <table class="table translator {{ if .ShowOrigToolbox }}show-orig-toolbox{{ end }}">
         <thead>
           <tr>
             <th></th>

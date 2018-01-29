@@ -151,14 +151,18 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 			itemsPerPage: size,
 		}
 
+		c, err := r.Cookie("show-orig-toolbox")
+		showOrigToolbox := err == nil && c.Value == "1"
 		err = bookTmpl.Execute(w, struct {
 			Book
 			Pagination
-			Query query
+			Query           query
+			ShowOrigToolbox bool
 		}{
 			book,
 			pg,
 			query{r.URL.Query()},
+			showOrigToolbox,
 		})
 		if err != nil {
 			logError(err)
