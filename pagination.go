@@ -77,7 +77,11 @@ func (p Pagination) Render() template.HTML {
 		buf.WriteString(`<li><span>...</span></li>`)
 	}
 	if p.PageNumber+1 < tp {
-		fmt.Fprintf(&buf, `<li><a rel="next" href="%s?%s">%d</a></li>`, path, q.Page(tp), tp)
+		rel := `rel="next" `
+		if p.PageNumber < tp {
+			rel = ""
+		}
+		fmt.Fprintf(&buf, `<li><a %shref="%s?%s">%d</a></li>`, rel, path, q.Page(tp), tp)
 	}
 	buf.WriteString(`</ul></div>`)
 	return template.HTML(buf.String())
