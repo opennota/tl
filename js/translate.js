@@ -308,6 +308,10 @@
           dlg.modal('hide');
           $row.remove();
           updateProgress(fragments_total - 1, data.fragments_translated);
+          let num_filtered = +$('.button-filter sup').text();
+          if (num_filtered) {
+            $('.button-filter sup').text(num_filtered - 1);
+          }
         }).fail((xhr, status, err) => alert(err));
       }
     });
