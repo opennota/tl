@@ -13,6 +13,7 @@
 
 //go:generate esc -o static.go css js fonts template
 
+// A web app for translators.
 package main
 
 import (
