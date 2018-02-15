@@ -44,7 +44,7 @@
       beforeSerialize: () => {
         let text = $textarea.val();
         text = text.replace(/(^|\s)- /g, '$1— ');
-        text = text.replace(/(^|[\s(\[])"(\S)/g, '$1«$2');
+        text = text.replace(/(^|[\s([])"(\S)/g, '$1«$2');
         text = text.replace(/(\S)"([\s.,!?:;…)\]]|$)/g, '$1»$2');
         text = text.replace(/\.\.\./g, '…');
         $textarea.val(text);
@@ -240,8 +240,10 @@
     let c = $('#container');
     if (c.hasClass('container-fluid')) {
       c.removeClass('container-fluid').addClass('container');
+      Cookies.set('fluid', 0);
     } else {
       c.removeClass('container').addClass('container-fluid');
+      Cookies.set('fluid', 1);
     }
   }
 

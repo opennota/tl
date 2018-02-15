@@ -153,16 +153,20 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 
 		c, err := r.Cookie("show-orig-toolbox")
 		showOrigToolbox := err == nil && c.Value == "1"
+		c, err = r.Cookie("fluid")
+		fluid := err == nil && c.Value == "1"
 		err = bookTmpl.Execute(w, struct {
 			Book
 			Pagination
 			Query           query
 			ShowOrigToolbox bool
+			Fluid           bool
 		}{
 			book,
 			pg,
 			query{r.URL.Query()},
 			showOrigToolbox,
+			fluid,
 		})
 		if err != nil {
 			logError(err)
