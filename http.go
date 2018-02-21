@@ -257,7 +257,8 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			bid, err = a.db.AddBook(title, split(content))
+			autotranslate := r.PostFormValue("autotranslate") != ""
+			bid, err = a.db.AddBook(title, split(content), autotranslate)
 			if err != nil {
 				internalError(w, err)
 				return

@@ -34,7 +34,8 @@ var (
 	ErrNotFound     = errors.New("not found")
 	ErrInconsistent = errors.New("database is inconsistent")
 
-	rWord = regexp.MustCompile(`\w+`)
+	rWord   = regexp.MustCompile(`\w+`)
+	rLetter = regexp.MustCompile(`\pL`)
 )
 
 type DB struct {
@@ -406,7 +407,7 @@ func (db *DB) BookByID(bid uint64) (Book, error) {
 	return book, nil
 }
 
-func (db *DB) AddBook(title string, fragments []string) (uint64, error) {
+func (db *DB) AddBook(title string, fragments []string, autotranslate bool) (uint64, error) {
 	now := time.Now()
 	var bid uint64
 	err := db.Update(func(tx *bolt.Tx) error {
@@ -417,13 +418,29 @@ func (db *DB) AddBook(title string, fragments []string) (uint64, error) {
 		if err != nil {
 			return err
 		}
-		_, err = tx.Bucket([]byte("versions")).CreateBucket(encode(bid))
+		vb, err := tx.Bucket([]byte("versions")).CreateBucket(encode(bid))
 		if err != nil {
 			return err
 		}
 
 		ids := make([]uint64, len(fragments))
+		fragmentsTranslated := 0
 		for i := range fragments {
+			versionsIDs := []uint64{}
+			if autotranslate && !rLetter.MatchString(fragments[i]) {
+				vid, _ := vb.NextSequence()
+				if err := marshal(vb, vid, TranslationVersion{
+					ID:      vid,
+					Created: now,
+					Updated: now,
+					Text:    fragments[i],
+				}); err != nil {
+					return err
+				}
+				fragmentsTranslated++
+				versionsIDs = append(versionsIDs, vid)
+			}
+
 			fid, _ := fb.NextSequence()
 			ids[i] = fid
 			if err := marshal(fb, fid, Fragment{
@@ -431,7 +448,7 @@ func (db *DB) AddBook(title string, fragments []string) (uint64, error) {
 				Created:     now,
 				Updated:     now,
 				Text:        fragments[i],
-				VersionsIDs: []uint64{},
+				VersionsIDs: versionsIDs,
 			}); err != nil {
 				return err
 			}
@@ -442,7 +459,7 @@ func (db *DB) AddBook(title string, fragments []string) (uint64, error) {
 			Title:               title,
 			Created:             now,
 			FragmentsTotal:      len(fragments),
-			FragmentsTranslated: 0,
+			FragmentsTranslated: fragmentsTranslated,
 			FragmentsIDs:        ids,
 		}); err != nil {
 			return err
