@@ -251,7 +251,8 @@ td.t > div:last-child {
   background-color: #bbb;
 }
 .complete {
-  color: green;
+  color: green !important;
+  cursor: default;
 }
 td.complete-col {
   width: 1px;
