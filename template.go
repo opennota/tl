@@ -41,7 +41,6 @@ var (
 	addTmpl        = mustParse("add")
 	bookTmpl       = mustParse("book")
 	removeTmpl     = mustParse("remove")
-	starredTmpl    = mustParse("starred")
 	readTmpl       = mustParse("read")
 	adminTmpl      = mustParse("admin")
 	scratchpadTmpl = mustParse("scratchpad")

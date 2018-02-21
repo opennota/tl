@@ -53,7 +53,6 @@ func main() {
 	r.HandleFunc("/add", app.AddBook).Methods("GET", "POST")
 	r.HandleFunc("/add/{csv|json}", app.AddBook).Methods("POST")
 	r.HandleFunc("/remove", app.RemoveBook).Methods("GET")
-	r.HandleFunc("/starred", app.Starred).Methods("GET")
 	r.HandleFunc("/admin", app.Admin).Methods("GET")
 	r.HandleFunc("/backup", app.Backup).Methods("GET")
 	r.HandleFunc(`/book/{book_id:[0-9]+}`, app.Book).

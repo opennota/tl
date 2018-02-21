@@ -74,14 +74,6 @@ type TranslationVersion struct {
 	Text    string    `json:"text"`
 }
 
-type StarredFragment struct {
-	Created    time.Time `json:"created"`
-	BookID     uint64    `json:"book_id"`
-	BookTitle  string    `json:"book_title"`
-	FragmentID uint64    `json:"fragment_id"`
-	Fragment   string    `json:"fragment"`
-}
-
 type Scratchpad struct {
 	ID      uint64    `json:"id"`
 	Created time.Time `json:"created"`
@@ -129,10 +121,6 @@ func OpenDatabase(path string, mode os.FileMode, options *bolt.Options) (DB, err
 			return err
 		}
 		_, err = tx.CreateBucketIfNotExists([]byte("versions"))
-		if err != nil {
-			return err
-		}
-		_, err = tx.CreateBucketIfNotExists([]byte("starred"))
 		if err != nil {
 			return err
 		}
@@ -712,7 +700,6 @@ func (db *DB) RemoveFragment(bid, fid uint64) (int, error) {
 }
 
 func (db *DB) StarFragment(bid, fid uint64) error {
-	now := time.Now()
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("index"))
 		var book Book
@@ -735,22 +722,6 @@ func (db *DB) StarFragment(bid, fid uint64) error {
 			return nil
 		}
 
-		bb := tx.Bucket([]byte("starred"))
-		sfid := make([]byte, 8*2)
-		binary.LittleEndian.PutUint64(sfid, bid)
-		binary.LittleEndian.PutUint64(sfid[8:], fid)
-		if data, err := json.Marshal(StarredFragment{
-			Created:    now,
-			BookID:     bid,
-			BookTitle:  book.Title,
-			FragmentID: fid,
-			Fragment:   f.Text,
-		}); err != nil {
-			return err
-		} else if err := bb.Put(sfid, data); err != nil {
-			return err
-		}
-
 		f.Starred = true
 
 		if err := marshal(fb, fid, &f); err != nil {
@@ -763,22 +734,6 @@ func (db *DB) StarFragment(bid, fid uint64) error {
 
 func (db *DB) UnstarFragment(bid, fid uint64) error {
 	return db.Update(func(tx *bolt.Tx) error {
-		bb := tx.Bucket([]byte("starred"))
-		var sf StarredFragment
-		sfid := make([]byte, 8*2)
-		binary.LittleEndian.PutUint64(sfid, bid)
-		binary.LittleEndian.PutUint64(sfid[8:], fid)
-		if data := bb.Get(sfid); data == nil {
-			return nil
-		} else if err := json.Unmarshal(data, &sf); err != nil {
-			return err
-		} else if sf.BookID != bid || sf.FragmentID != fid {
-			return ErrInconsistent
-		}
-		if err := bb.Delete(sfid); err != nil {
-			return err
-		}
-
 		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 		var f Fragment
 		if found, err := unmarshal(fb, fid, &f); err != nil {
@@ -797,38 +752,6 @@ func (db *DB) UnstarFragment(bid, fid uint64) error {
 
 		return nil
 	})
-}
-
-type starredByCreated []StarredFragment
-
-func (t starredByCreated) Len() int { return len(t) }
-func (t starredByCreated) Less(i, j int) bool {
-	return t[j].Created.Before(t[i].Created)
-}
-func (t starredByCreated) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
-func (db *DB) Starred() ([]StarredFragment, error) {
-	var starred []StarredFragment
-	err := db.View(func(tx *bolt.Tx) error {
-		starred = starred[:0]
-		b := tx.Bucket([]byte("starred"))
-		c := b.Cursor()
-		for k, v := c.Last(); k != nil; k, v = c.Prev() {
-			var bm StarredFragment
-			if err := json.Unmarshal(v, &bm); err != nil {
-				return err
-			}
-			starred = append(starred, bm)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	sort.Sort(starredByCreated(starred))
-	return starred, nil
 }
 
 func (db *DB) CommentFragment(bid, fid uint64, text string) error {
@@ -1032,10 +955,8 @@ func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
 		}
 		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 		vb := tx.Bucket([]byte("versions")).Bucket(encode(bid))
-		bb := tx.Bucket([]byte("starred"))
 		fragments := make([]Fragment, 0, book.FragmentsTotal)
 		versions := make([]TranslationVersion, 0, book.FragmentsTranslated)
-		starred := []StarredFragment{}
 		for _, fid := range book.FragmentsIDs {
 			var f Fragment
 			if _, err := unmarshal(fb, fid, &f); err != nil {
@@ -1049,21 +970,6 @@ func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
 				}
 				versions = append(versions, v)
 			}
-			if f.Starred {
-				sfid := make([]byte, 8*2)
-				binary.LittleEndian.PutUint64(sfid, bid)
-				binary.LittleEndian.PutUint64(sfid[8:], fid)
-				d := bb.Get(sfid)
-				if d == nil {
-					f.Starred = false
-				} else {
-					var sf StarredFragment
-					if err := json.Unmarshal(d, &sf); err != nil {
-						return err
-					}
-					starred = append(starred, sf)
-				}
-			}
 		}
 
 		var sp *Scratchpad
@@ -1076,13 +982,11 @@ func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
 		data, err = json.Marshal(&struct {
 			Book        `json:"book"`
 			Fragments   []Fragment           `json:"fragments"`
-			Starred     []StarredFragment    `json:"starred"`
 			Versions    []TranslationVersion `json:"versions"`
 			*Scratchpad `json:"scratchpad"`
 		}{
 			book,
 			fragments,
-			starred,
 			versions,
 			sp,
 		})
@@ -1097,19 +1001,16 @@ func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
 func (db *DB) ImportBookFromJSON(data []byte) (uint64, error) {
 	var book Book
 	var fragments []Fragment
-	var starred []StarredFragment
 	var versions []TranslationVersion
 	var sp *Scratchpad
 	if err := json.Unmarshal(data, &struct {
 		Book       *Book
 		Fragments  *[]Fragment
-		Starred    *[]StarredFragment
 		Versions   *[]TranslationVersion
 		Scratchpad **Scratchpad
 	}{
 		&book,
 		&fragments,
-		&starred,
 		&versions,
 		&sp,
 	}); err != nil {
@@ -1148,22 +1049,6 @@ func (db *DB) ImportBookFromJSON(data []byte) (uint64, error) {
 			}
 			if err := marshal(fb, fid, &f); err != nil {
 				return err
-			}
-		}
-
-		if len(starred) > 0 {
-			b := tx.Bucket([]byte("starred"))
-			sfid := make([]byte, 8*2)
-			for _, f := range starred {
-				f.BookID = bid
-				f.FragmentID = fmap[f.FragmentID]
-				binary.LittleEndian.PutUint64(sfid, bid)
-				binary.LittleEndian.PutUint64(sfid[8:], f.FragmentID)
-				if data, err := json.Marshal(&f); err != nil {
-					return err
-				} else if err := b.Put(sfid, data); err != nil {
-					return err
-				}
 			}
 		}
 

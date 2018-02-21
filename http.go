@@ -617,20 +617,6 @@ func (a *App) StarFragment(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (a *App) Starred(w http.ResponseWriter, r *http.Request) {
-	starred, err := a.db.Starred()
-	if err != nil {
-		internalError(w, err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html")
-	err = starredTmpl.Execute(w, starred)
-	if err != nil {
-		logError(err)
-	}
-}
-
 func (a *App) CommentFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
