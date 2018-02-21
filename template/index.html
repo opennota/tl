@@ -69,7 +69,9 @@
                   <i class="edit-title fa fa-pencil"></i>
                 </td>
                 <td>
-                  {{ pct .FragmentsTranslated .FragmentsTotal }}%
+                  <span title="{{ pct6 .FragmentsTranslated .FragmentsTotal }}%">
+                    {{ pct .FragmentsTranslated .FragmentsTotal }}%
+                  </span>
                   ({{ .FragmentsTranslated }} / {{ .FragmentsTotal }})
                 </td>
                 <td>

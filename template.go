@@ -28,6 +28,7 @@ import (
 var (
 	funcs = template.FuncMap{
 		"pct":         pct,
+		"pct6":        pct6,
 		"pretty":      pretty,
 		"rfc3339":     rfc3339,
 		"datetimeStr": datetimeStr,
@@ -72,6 +73,13 @@ func pct(a, b int) int {
 		return 0
 	}
 	return 100 * a / b
+}
+
+func pct6(a, b int) string {
+	if b == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%.6g", 100*float64(a)/float64(b))
 }
 
 func rfc3339(t time.Time) string {
