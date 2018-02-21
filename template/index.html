@@ -74,7 +74,7 @@
                 </td>
                 <td>
                   {{ if not .LastActivity.IsZero }}
-                    <time datetime="{{ rfc3339 .LastActivity }}">
+                    <time datetime="{{ rfc3339 .LastActivity }}" title="{{ datetimeStr .LastActivity }}">
                       {{ pretty .LastActivity }}
                     </time>
                   {{ end }}

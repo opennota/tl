@@ -27,13 +27,14 @@ import (
 
 var (
 	funcs = template.FuncMap{
-		"pct":      pct,
-		"pretty":   pretty,
-		"rfc3339":  rfc3339,
-		"dec":      dec,
-		"inc":      inc,
-		"render":   render,
-		"renderhl": renderhl,
+		"pct":         pct,
+		"pretty":      pretty,
+		"rfc3339":     rfc3339,
+		"datetimeStr": datetimeStr,
+		"dec":         dec,
+		"inc":         inc,
+		"render":      render,
+		"renderhl":    renderhl,
 	}
 	indexTmpl      = mustParse("index")
 	addTmpl        = mustParse("add")
@@ -75,6 +76,10 @@ func pct(a, b int) int {
 
 func rfc3339(t time.Time) string {
 	return t.Format(time.RFC3339)
+}
+
+func datetimeStr(t time.Time) string {
+	return t.Format("02-Jan-2006 15:04:05")
 }
 
 func pretty(t time.Time) string {
