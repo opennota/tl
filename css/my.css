@@ -253,3 +253,6 @@ td.t > div:last-child {
 .complete {
   color: green;
 }
+td.complete-col {
+  width: 1px;
+}

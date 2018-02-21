@@ -65,7 +65,7 @@
           <tbody>
             {{ range . }}
               <tr>
-                <td>
+                <td class="complete-col">
                   {{ if and (eq .FragmentsTranslated .FragmentsTotal) (gt .FragmentsTranslated 0) }}
                     <i class="complete fa fa-check"></i>
                   {{ end }}
