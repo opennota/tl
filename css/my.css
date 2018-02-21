@@ -250,3 +250,6 @@ td.t > div:last-child {
 .dropdown-menu.dropdown-export li a:hover {
   background-color: #bbb;
 }
+.complete {
+  color: green;
+}

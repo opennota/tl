@@ -56,6 +56,7 @@
         <table class="table table-condensed table-striped table-hover">
           <thead>
             <tr>
+              <th></th>
               <th>Translation</th>
               <th>Complete</th>
               <th>Last activity</th>
@@ -63,7 +64,12 @@
           </thead>
           <tbody>
             {{ range . }}
-              <tr {{ if and (eq .FragmentsTranslated .FragmentsTotal) (gt .FragmentsTranslated 0) }}class="success"{{ end }}>
+              <tr>
+                <td>
+                  {{ if and (eq .FragmentsTranslated .FragmentsTotal) (gt .FragmentsTranslated 0) }}
+                    <i class="complete fa fa-check"></i>
+                  {{ end }}
+                </td>
                 <td>
                   <a class="title" href="/book/{{ .ID }}">{{ .Title }}</a>
                   <i class="edit-title fa fa-pencil"></i>
