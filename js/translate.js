@@ -103,7 +103,7 @@
         cancelEdit();
       }
     });
-    $form.find('.cancel').click(cancelEdit);
+    $form.on('click', '.cancel', cancelEdit);
     if (vid) {
       $div.replaceWith($form);
     } else {
@@ -296,7 +296,7 @@
         cancelEditOrig();
       }
     });
-    $form.find('.cancel').click(cancelEditOrig);
+    $form.on('click', '.cancel', cancelEditOrig);
     $div.replaceWith($form);
     $textarea.autoGrow().focus();
   }
@@ -339,9 +339,10 @@
       cancelEditOrig = null;
       $newRow.remove();
     };
-    $newRow.find('.cancel').click(cancelEditOrig);
-    $newRow.find('.x-orig-up').click(() => $newRow.prev().prev().before($newRow));
-    $newRow.find('.x-orig-down').click(() => $newRow.next().next().after($newRow));
+    $newRow
+      .on('click', '.cancel', cancelEditOrig)
+      .on('click', '.x-orig-up', () => $newRow.prev().prev().before($newRow))
+      .on('click', '.x-orig-down', () => $newRow.next().next().after($newRow));
     let $form = $newRow.find('form');
     $form.attr('action', '/book/' + book_id + '/fragments');
     let $submit = $form.find(':submit');
@@ -408,7 +409,7 @@
         }
       }
     });
-    $('.orig-empty-alert a').click(e => {
+    $('.orig-empty-alert a').on('click', e => {
       e.preventDefault();
       addOrig();
     });
@@ -418,8 +419,8 @@
         $(e.target).closest('label').find('[type="radio"]').prop('checked', true);
       })
       .on('click', '.dropdown-menu', e => e.stopPropagation());
-    $('#orig_contains, #trans_contains').click(e => $(e.target).next().focus());
-    $('.fa-window-restore').click(toggleFluid);
+    $('#orig_contains, #trans_contains').on('click', e => $(e.target).next().focus());
+    $('.fa-window-restore').on('click', toggleFluid);
     if (location.hash) {
       $(location.hash).addClass('highlight');
     }

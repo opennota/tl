@@ -189,7 +189,7 @@
               </li>
               <li>
                 <label>
-                  <input name="f" type="radio" value="o"
+                  <input id="orig_contains" name="f" type="radio" value="o"
                     {{ if eq (.Query.Get "f") "o" }}checked{{ end }}></input>
                   <input name="to" type="text" placeholder="The original contains"
                     value="{{ .Query.Get "to" }}"></input>
@@ -197,7 +197,7 @@
               </li>
               <li>
                 <label>
-                  <input name="f" type="radio" value="t"
+                  <input id="trans_contains" name="f" type="radio" value="t"
                     {{ if eq (.Query.Get "f") "t" }}checked{{ end }}></input>
                   <input name="tt" type="text" placeholder="The translation contains"
                     value="{{ .Query.Get "tt" }}"></input>
