@@ -169,7 +169,9 @@
           e.stopPropagation();
           $submit.click();
         }
-      }).autoGrow().focus();
+      }).focus();
+      // Delay autoGrow until the textarea's width property is initialized (Google Chrome).
+      setTimeout(() => $textarea.autoGrow(), 1);
     };
     $edit.on('click', editCommentary);
     $form.ajaxForm({
