@@ -580,8 +580,16 @@ func (db *DB) AddFragment(bid, fidAfter uint64, text string) (Fragment, error) {
 
 		fb := tx.Bucket([]byte("fragments")).Bucket(encode(bid))
 		fid, _ := fb.NextSequence()
+		f = Fragment{
+			ID:          fid,
+			Created:     now,
+			Updated:     now,
+			Text:        text,
+			VersionsIDs: []uint64{},
+		}
 		if fidAfter == 0 {
 			book.FragmentsIDs = append([]uint64{fid}, book.FragmentsIDs...)
+			f.SeqNum = 1
 		} else {
 			findex := idx(book.FragmentsIDs, fidAfter)
 			if findex == -1 {
@@ -592,16 +600,10 @@ func (db *DB) AddFragment(bid, fidAfter uint64, text string) (Fragment, error) {
 			fids = append(fids, fid)
 			fids = append(fids, book.FragmentsIDs[findex+1:]...)
 			book.FragmentsIDs = fids
+			f.SeqNum = findex + 2
 		}
 		book.FragmentsTotal++
 
-		f = Fragment{
-			ID:          fid,
-			Created:     now,
-			Updated:     now,
-			Text:        text,
-			VersionsIDs: []uint64{},
-		}
 		if err := marshal(fb, fid, f); err != nil {
 			return err
 		}

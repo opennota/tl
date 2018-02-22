@@ -514,9 +514,11 @@ func (a *App) AddFragment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(struct {
 		Fragment
-		Text template.HTML `json:"text"`
+		SeqNum int           `json:"seq_num"`
+		Text   template.HTML `json:"text"`
 	}{
 		f,
+		f.SeqNum,
 		render(f.Text),
 	})
 }
