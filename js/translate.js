@@ -144,6 +144,7 @@
     let $form = $($('#commentary-form-tmpl').html());
     $form.attr('action', '/book/' + book_id + '/' + fid + '/comment');
     let $submit = $form.find('.btn-save');
+    let $edit = $form.find('.btn-edit');
     let $div = $form.find('.text');
     let render = (text) => {
       let md = markdownit({
@@ -154,9 +155,11 @@
       $div.html(md.render(String(text)));
       $div.on('dblclick', editCommentary);
       $submit.hide();
+      $edit.show();
     };
     let editCommentary = () => {
       $div.off('dblclick');
+      $edit.hide();
       let $textarea = $('<textarea name="text" spellcheck="false"></textarea>');
       $div.html('').append($textarea);
       $textarea.text($target.data('comment'));
@@ -168,6 +171,7 @@
         }
       }).autoGrow().focus();
     };
+    $edit.on('click', editCommentary);
     $form.ajaxForm({
       dataType: 'json',
       beforeSubmit: () => $submit.attr('disabled', true),
@@ -182,13 +186,13 @@
         $form.find('.alert-container').html($alert);
       }
     });
-    $commentaryRow.find('td').html('').append($form);
     let text = $target.data('comment');
     if (text) {
       render(text);
     } else {
       editCommentary();
     }
+    $commentaryRow.find('td').html('').append($form);
   }
 
   function remove(e) {
