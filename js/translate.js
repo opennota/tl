@@ -74,13 +74,13 @@
       $form.replaceWith($div);
       $previous = $div;
     };
-    $textarea.keydown(e => {
+    $textarea.on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         e.stopPropagation();
-        let $nextRow = $row.next('tr');
-        let $nextDiv = $nextRow.find('div[id^=v]:first-child');
         $next = null;
         if (!e.shiftKey) {
+          let $nextRow = $row.next().next();
+          let $nextDiv = $nextRow.find('div[id^=v]:first-child');
           if ($nextDiv.length) {
             $next = $nextDiv.find('.x-edit');
           } else {
@@ -94,7 +94,7 @@
           }
         } else if ($textarea.val() != text) {
           $form.find(':submit').click();
-        } else if ($next) {
+        } else if ($next && $next.length) {
           $next.click();
         } else {
           cancelEdit();
@@ -112,35 +112,68 @@
     $textarea.autoGrow().focus();
   }
 
+  function closeCommentary(e) {
+    let $target = $(e.target);
+    let $commentaryRow = $target.closest('tr');
+    $commentaryRow.removeClass('shown').find('td').html('');
+    let $comment = $commentaryRow.prev().find('.x-comment');
+    $comment.removeClass('fa-times-circle');
+    if ($comment.data('comment')) {
+      $comment.addClass('fa-comment');
+    } else {
+      $comment.addClass('fa-comment-o');
+    }
+  }
+
   function comment(e) {
     let $target = $(e.target);
-    let closePopover = () => {
-      $target.popover('destroy');
+    let $row = $target.closest('tr');
+    let $commentaryRow = $row.next();
+    $commentaryRow.toggleClass('shown');
+    if (!$commentaryRow.hasClass('shown')) {
       $target.removeClass('fa-times-circle');
       if ($target.data('comment')) {
         $target.addClass('fa-comment');
       } else {
         $target.addClass('fa-comment-o');
       }
-    };
-    if ($target.data('bs.popover')) {
-      closePopover();
       return;
     }
     $target.removeClass('fa-comment fa-comment-o').addClass('fa-times-circle');
-    let $row = $target.closest('tr');
     let fid = $row.attr('id').substr(1);
-    let $form = $($('#comment-form-tmpl').html());
+    let $form = $($('#commentary-form-tmpl').html());
     $form.attr('action', '/book/' + book_id + '/' + fid + '/comment');
-    let $submit = $form.find(':submit');
-    $submit.hide();
-    $form.find('.icon-close').click(() => closePopover());
+    let $submit = $form.find('.btn-save');
+    let $div = $form.find('.text');
+    let render = (text) => {
+      let md = markdownit({
+        linkify: true,
+        typographer: true,
+        quotes: '«»„“'
+      });
+      $div.html(md.render(String(text)));
+      $div.on('dblclick', editCommentary);
+      $submit.hide();
+    };
+    let editCommentary = () => {
+      $div.off('dblclick');
+      let $textarea = $('<textarea name="text" spellcheck="false"></textarea>');
+      $div.html('').append($textarea);
+      $textarea.text($target.data('comment'));
+      $submit.attr('disabled', false).show();
+      $textarea.on('keydown', e => {
+        if (e.ctrlKey && e.which == 13) {
+          e.stopPropagation();
+          $submit.click();
+        }
+      }).autoGrow().focus();
+    };
     $form.ajaxForm({
       dataType: 'json',
       beforeSubmit: () => $submit.attr('disabled', true),
       success: data => {
         $target.data('comment', data.text);
-        closePopover();
+        render(data.text);
       },
       error: data => {
         $submit.attr('disabled', false);
@@ -149,39 +182,12 @@
         $form.find('.alert-container').html($alert);
       }
     });
+    $commentaryRow.find('td').html('').append($form);
     let text = $target.data('comment');
-    let $div = $form.find('.text');
-    $div.dblclick(() => {
-      let $textarea = $('<textarea name="text" spellcheck="false"></textarea>');
-      $textarea.text(text);
-      $textarea.keyup(() => $submit.show());
-      $textarea.keydown(e => e.stopPropagation());
-      $div.html('');
-      $div.append($textarea);
-      $div.off('dblclick');
-      $div.removeAttr('title');
-      $div.closest('.popover').find('.arrow').remove();
-      $textarea.autoGrow();
-      $target.popover('show');
-      $textarea.focus();
-    });
     if (text) {
-      let md = markdownit({
-        linkify: true,
-        typographer: true,
-        quotes: '«»„“'
-      });
-      $div.html(md.render(String(text)));
-    }
-    $target
-      .popover({
-        placement: 'left',
-        html: true,
-        content: $form
-      })
-      .popover('show');
-    if (!text) {
-      $div.dblclick();
+      render(text);
+    } else {
+      editCommentary();
     }
   }
 
@@ -277,7 +283,7 @@
       cancelEditOrig = null;
       $form.replaceWith($div);
     };
-    $textarea.keydown(e => {
+    $textarea.on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         $form.find(':submit').click();
       } else if (e.which == 27) {
@@ -328,15 +334,15 @@
       $newRow.remove();
     };
     $newRow.find('.cancel').click(cancelEditOrig);
-    $newRow.find('.x-orig-up').click(() => $newRow.prev().before($newRow));
-    $newRow.find('.x-orig-down').click(() => $newRow.next().after($newRow));
+    $newRow.find('.x-orig-up').click(() => $newRow.prev().prev().before($newRow));
+    $newRow.find('.x-orig-down').click(() => $newRow.next().next().after($newRow));
     let $form = $newRow.find('form');
     $form.attr('action', '/book/' + book_id + '/fragments');
     let $submit = $form.find(':submit');
     $form.ajaxForm({
       dataType: 'json',
       beforeSerialize: ($form) => {
-        let prev_id = $newRow.prev().attr('id');
+        let prev_id = $newRow.prev().prev().attr('id');
         let after = (prev_id) ? prev_id.substr(1) : '';
         $form.find('input[name=after]').attr('value', after);
       },
@@ -351,6 +357,7 @@
         $html = $html.add('<a class="permalink" href="/book/' + book_id + '/' + data.id + '">#</a>');
         $newRow.find('td.o > form').replaceWith($html);
         $newRow.removeClass('editing').attr('id', 'f' + data.id);
+        $newRow.after('<tr class="commentary"><td colspan="5"></td></tr>');
         updateProgress(fragments_total + 1, fragments_translated);
       },
       error: data => {
@@ -361,7 +368,7 @@
       }
     });
     if (e) {
-      $(e.target).closest('tr').after($newRow);
+      $(e.target).closest('tr').next().after($newRow);
     } else {
       $('.translator > tbody').append($newRow);
     }
@@ -379,13 +386,14 @@
       .on('click', '.x-translate, .x-edit', edit)
       .on('click', '.x-remove', remove)
       .on('click', '.x-comment', comment)
+      .on('click', '.commentary-form .btn-close', closeCommentary)
       .on('click', '.x-star', star)
       .on('click', '.x-unstar', unstar)
       .on('click', '.x-expand', toggleOrigToolbox)
       .on('click', '.x-remove-orig', removeOrig)
       .on('click', '.x-edit-orig', editOrig)
       .on('click', '.x-add-orig', addOrig);
-    $(document).keydown(e => {
+    $(document).on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         if ($previous) {
           $previous.find('.x-edit').click();
@@ -411,4 +419,4 @@
     }
   });
 })();
-// vim: et sw=2
+// vim: ts=2 sts=2 sw=2 et

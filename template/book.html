@@ -73,21 +73,23 @@
     <script id="transp-div-tmpl" type="text/template">
       <div style="position: absolute; left: 0; right: 0; top: 0; bottom: 0;"></div>
     </script>
-    <script id="comment-form-tmpl" type="text/template">
-      <form class="comment-form" method="POST">
+    <script id="commentary-form-tmpl" type="text/template">
+      <form class="commentary-form" method="POST">
         <div class="text" title="Double click to edit"></div>
         <div class="alert-container"></div>
-        <div class="btn-group btn-group-xs comment-form-buttons pull-right">
-          <button type="submit" class="btn btn-primary">
+        <div class="btn-group btn-group-xs commentary-form-buttons">
+          <button type="submit" class="btn btn-primary btn-save">
             Save
           </button>
+          <button class="btn btn-secondary btn-close">
+            Close
+          </button>
         </div>
-        <i class="fa fa-times-circle icon-close"></i>
       </form>
     </script>
     <script id="new-row-tmpl" type="text/template">
       <tr class="editing">
-        <td>
+        <td class="col-first">
           <i class="fa fa-arrow-up x-orig-up"></i>
           <i class="fa fa-arrow-down x-orig-down"></i>
         </td>
@@ -104,10 +106,9 @@
             </div>
           </form>
         </td>
-        <td></td>
-        <td class="t">
-        </td>
-        <td></td>
+        <td class="col-middle"></td>
+        <td class="t"></td>
+        <td class="col-last"></td>
       </tr>
     </script>
     <script>
@@ -300,7 +301,7 @@
         <tbody>
           {{ range .Fragments }}
             <tr id="f{{ .ID }}">
-              <td>
+              <td class="col-first">
                 {{ if .Starred }}
                   <i class="fa fa-star x-unstar"></i>
                 {{ else }}
@@ -329,7 +330,7 @@
                   #{{ .SeqNum }}
                 </a>
               </td>
-              <td>
+              <td class="col-middle">
                 <i class="fa fa-arrow-right x-translate"></i>
               </td>
               <td class="t">
@@ -349,13 +350,16 @@
                   </div>
                 {{ end }}
               </td>
-              <td>
+              <td class="col-last">
                 {{ if .Comment }}
                   <i class="fa fa-comment x-comment" data-comment="{{ render .Comment }}"></i>
                 {{ else }}
                   <i class="fa fa-comment-o x-comment"></i>
                 {{ end }}
               </td>
+            </tr>
+            <tr class="commentary">
+              <td colspan="5"></td>
             </tr>
           {{ end }}
         </tbody>
