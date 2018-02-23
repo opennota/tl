@@ -99,8 +99,6 @@
         } else {
           cancelEdit();
         }
-      } else if (e.which == 27) {
-        cancelEdit();
       }
     });
     $form.on('click', '.cancel', cancelEdit);
@@ -143,7 +141,7 @@
     let fid = $row.attr('id').substr(1);
     let $form = $($('#commentary-form-tmpl').html());
     $form.attr('action', '/book/' + book_id + '/' + fid + '/comment');
-    let $submit = $form.find('.btn-save');
+    let $submit = $form.find(':submit');
     let $edit = $form.find('.btn-edit');
     let $div = $form.find('.text');
     let render = (text) => {
@@ -291,9 +289,8 @@
     };
     $textarea.on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
-        $form.find(':submit').click();
-      } else if (e.which == 27) {
-        cancelEditOrig();
+        e.stopPropagation();
+        $submit.click();
       }
     });
     $form.on('click', '.cancel', cancelEditOrig);
@@ -379,7 +376,12 @@
     } else {
       $('.translator > tbody').append($newRow);
     }
-    $textarea.autoGrow().focus();
+    $textarea.on('keydown', e => {
+      if (e.ctrlKey && e.which == 13) {
+        e.stopPropagation();
+        $submit.click();
+      }
+    }).autoGrow().focus();
   }
 
   function toggleOrigToolbox(e) {
