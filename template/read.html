@@ -39,19 +39,19 @@
 
       <br>
 
-      {{ range .Fragments }}
+      {{- range .Fragments }}
         <p class="text">
-          {{ if gt (len .Versions) 0 }}
-            {{ if $.LastVariants }}
-              {{ render ((index .Versions (dec (len .Versions))).Text) }}
-            {{ else }}
-              {{ render ((index .Versions 0).Text) }}
-            {{ end }}
-          {{ else }}
-            {{ render .Text }}
-          {{ end }}
+          {{- if gt (len .Versions) 0 -}}
+            {{- if $.LastVariants -}}
+              {{- render ((index .Versions (dec (len .Versions))).Text) -}}
+            {{- else -}}
+              {{- render ((index .Versions 0).Text) -}}
+            {{- end -}}
+          {{- else -}}
+            {{- render .Text -}}
+          {{- end -}}
         </p>
-      {{ end }}
+      {{- end }}
     </div>
   </body>
 </html>
