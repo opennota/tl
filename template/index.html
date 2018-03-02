@@ -77,11 +77,11 @@
                 </td>
                 <td>
                   {{ if not .LastActivity.IsZero }}
-                    {{ $d1 := datetimeStr .LastActivity }}
-                    {{ $d2 := pretty .LastActivity }}
+                    {{ $tooltip := datetimeStr .LastActivity }}
+                    {{ $text := pretty .LastActivity }}
                     <time datetime="{{ rfc3339 .LastActivity }}"
-                      {{- if ne $d1 $d2 }} title="{{ $d1 }}"{{ end }}>
-                      {{ $d2 }}
+                      {{- if ne $tooltip $text }} title="{{ $tooltip }}"{{ end }}>
+                      {{ $text }}
                     </time>
                   {{ end }}
                 </td>
