@@ -124,7 +124,7 @@ func pretty(t time.Time) string {
 		}
 		return fmt.Sprintf("%d weeks ago", weeks)
 	default:
-		return t.Format("02.01.2006 15:04:05")
+		return datetimeStr(t)
 	}
 }
 
