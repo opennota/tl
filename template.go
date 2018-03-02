@@ -90,7 +90,7 @@ func datetimeStr(t time.Time) string {
 }
 
 func pretty(t time.Time) string {
-	seconds := time.Since(t).Nanoseconds() / 1000000000
+	seconds := time.Since(t).Nanoseconds() / 1e9
 	days := seconds / (60 * 60 * 24)
 	switch {
 	case days < 0:
