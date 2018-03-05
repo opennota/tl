@@ -135,19 +135,6 @@ func OpenDatabase(path string, mode os.FileMode, options *bolt.Options) (DB, err
 	return DB{db}, nil
 }
 
-type booksByLastActivity []Book
-
-func (t booksByLastActivity) Len() int { return len(t) }
-func (t booksByLastActivity) Less(i, j int) bool {
-	if a, b := t[i].LastActivity, t[j].LastActivity; a != b {
-		return b.Before(a)
-	}
-	return t[i].ID > t[j].ID
-}
-func (t booksByLastActivity) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
 func (db *DB) Books() ([]Book, error) {
 	var books []Book
 	err := db.View(func(tx *bolt.Tx) error {
@@ -174,7 +161,12 @@ func (db *DB) BooksByActivity() ([]Book, error) {
 	if err != nil {
 		return nil, err
 	}
-	sort.Sort(booksByLastActivity(books))
+	sort.Slice(books, func(i, j int) bool {
+		if a, b := books[i].LastActivity, books[j].LastActivity; !a.Equal(b) {
+			return b.Before(a)
+		}
+		return books[i].ID > books[j].ID
+	})
 	return books, nil
 }
 
