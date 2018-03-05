@@ -388,6 +388,7 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Content-Disposition", `attachment; filename="book.json"`)
+		w.Header().Set("Content-Length", fmt.Sprint(len(data)))
 		w.Write(data)
 		return
 	}
