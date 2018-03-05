@@ -416,7 +416,7 @@
       addOrig();
     });
     updateProgress(fragments_total, fragments_translated);
-    $('#filter-form')
+    $('.filter-dropdown')
       .on('click', 'label', e => {
         $(e.target).closest('label').find('[type="radio"]').prop('checked', true);
       })

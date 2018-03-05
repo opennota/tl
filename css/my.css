@@ -202,7 +202,7 @@ td.t > div:last-child {
 .dropdown-menu.dropdown-filter li:not(:last-child) a {
   text-decoration: underline;
 }
-#filter-form label {
+#top-form label {
   font-weight: normal;
 }
 .comment-form .icon-close {

@@ -141,9 +141,9 @@
 
       <br>
 
-      <form id="filter-form" method="GET" action="/book/{{ .ID }}">
+      <form id="top-form" method="GET" action="/book/{{ .ID }}">
         <div class="btn-toolbar">
-          <div class="btn-group btn-group-xs">
+          <div class="btn-group btn-group-xs filter-dropdown">
             <button type="button" class="btn btn-xs btn-default dropdown-toggle button-filter" data-toggle="dropdown">
               Filter
               {{ if and (.Query.Get "f") }}
