@@ -377,8 +377,6 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if format == "json" {
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Content-Disposition", `attachment; filename="book.json"`)
 		data, err := a.db.ExportBookToJSON(bid)
 		if err != nil {
 			if err == ErrNotFound {
@@ -388,6 +386,8 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Content-Disposition", `attachment; filename="book.json"`)
 		w.Write(data)
 		return
 	}
