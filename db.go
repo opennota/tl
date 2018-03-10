@@ -31,8 +31,7 @@ import (
 )
 
 var (
-	ErrNotFound     = errors.New("not found")
-	ErrInconsistent = errors.New("database is inconsistent")
+	ErrNotFound = errors.New("not found")
 
 	rWord   = regexp.MustCompile(`\w+`)
 	rLetter = regexp.MustCompile(`\pL`)
