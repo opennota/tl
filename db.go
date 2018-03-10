@@ -125,10 +125,7 @@ func OpenDatabase(path string, mode os.FileMode, options *bolt.Options) (DB, err
 			return err
 		}
 		_, err = tx.CreateBucketIfNotExists([]byte("scratchpad"))
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	}); err != nil {
 		return DB{}, err
 	}
@@ -434,17 +431,14 @@ func (db *DB) AddBook(title string, fragments []string, autotranslate bool) (uin
 			}
 		}
 
-		if err := marshal(b, bid, Book{
+		return marshal(b, bid, Book{
 			ID:                  bid,
 			Title:               title,
 			Created:             now,
 			FragmentsTotal:      len(fragments),
 			FragmentsTranslated: fragmentsTranslated,
 			FragmentsIDs:        ids,
-		}); err != nil {
-			return err
-		}
-		return nil
+		})
 	})
 	if err != nil {
 		return 0, err
@@ -500,17 +494,14 @@ func (db *DB) AddTranslatedBook(title string, fragments [][]string) (uint64, err
 			}
 		}
 
-		if err := marshal(b, bid, Book{
+		return marshal(b, bid, Book{
 			ID:                  bid,
 			Title:               title,
 			Created:             now,
 			FragmentsTotal:      len(fragments),
 			FragmentsTranslated: fragmentsTranslated,
 			FragmentsIDs:        ids,
-		}); err != nil {
-			return err
-		}
-		return nil
+		})
 	})
 	if err != nil {
 		return 0, err
@@ -528,10 +519,7 @@ func (db *DB) UpdateBookTitle(bid uint64, title string) error {
 			return ErrNotFound
 		}
 		book.Title = title
-		if err := marshal(b, bid, &book); err != nil {
-			return err
-		}
-		return nil
+		return marshal(b, bid, &book)
 	})
 }
 
@@ -601,11 +589,8 @@ func (db *DB) AddFragment(bid, fidAfter uint64, text string) (Fragment, error) {
 		}
 
 		book.LastActivity = now
-		if err := marshal(b, bid, &book); err != nil {
-			return err
-		}
 
-		return nil
+		return marshal(b, bid, &book)
 	}); err != nil {
 		return Fragment{}, err
 	}
@@ -639,11 +624,7 @@ func (db *DB) UpdateFragment(bid, fid uint64, text string) error {
 		}
 
 		book.LastActivity = now
-		if err := marshal(b, bid, &book); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(b, bid, &book)
 	})
 }
 
@@ -682,11 +663,7 @@ func (db *DB) RemoveFragment(bid, fid uint64) (int, error) {
 		}
 		fragmentsTranslated = book.FragmentsTranslated
 
-		if err := marshal(b, bid, &book); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(b, bid, &book)
 	}); err != nil {
 		return 0, err
 	}
@@ -718,11 +695,7 @@ func (db *DB) StarFragment(bid, fid uint64) error {
 
 		f.Starred = true
 
-		if err := marshal(fb, fid, &f); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(fb, fid, &f)
 	})
 }
 
@@ -740,11 +713,7 @@ func (db *DB) UnstarFragment(bid, fid uint64) error {
 
 		f.Starred = false
 
-		if err := marshal(fb, fid, &f); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(fb, fid, &f)
 	})
 }
 
@@ -771,11 +740,7 @@ func (db *DB) CommentFragment(bid, fid uint64, text string) error {
 
 		f.Comment = text
 
-		if err := marshal(fb, fid, &f); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(fb, fid, &f)
 	})
 }
 
@@ -836,11 +801,7 @@ func (db *DB) Translate(bid, fid, vidOrZero uint64, text string) (TranslationVer
 		vers.Updated = now
 		vers.Text = text
 
-		if err := marshal(vb, vers.ID, &vers); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(vb, vers.ID, &vers)
 	})
 	if err != nil {
 		return TranslationVersion{}, 0, err
@@ -886,11 +847,7 @@ func (db *DB) RemoveVersion(bid, fid, vid uint64) (int, error) {
 		}
 		fragmentsTranslated = book.FragmentsTranslated
 
-		if err := marshal(b, bid, &book); err != nil {
-			return err
-		}
-
-		return nil
+		return marshal(b, bid, &book)
 	}); err != nil {
 		return 0, err
 	}
@@ -929,10 +886,7 @@ func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 		}
 		sp.Updated = now
 		sp.Text = text
-		if err := marshal(b, bid, &sp); err != nil {
-			return err
-		}
-		return nil
+		return marshal(b, bid, &sp)
 	})
 	return err
 }
