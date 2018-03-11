@@ -348,11 +348,11 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = readTmpl.Execute(w,
-		&struct {
-			*Book
+		struct {
+			Book
 			LastVariants bool
 		}{
-			&book,
+			book,
 			r.FormValue("last") != "",
 		})
 	if err != nil {
