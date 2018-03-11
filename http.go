@@ -76,8 +76,7 @@ func (a *App) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	err = indexTmpl.Execute(w, books)
-	if err != nil {
+	if err := indexTmpl.Execute(w, books); err != nil {
 		logError(err)
 	}
 }
@@ -155,7 +154,7 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 		showOrigToolbox := err == nil && c.Value == "1"
 		c, err = r.Cookie("fluid")
 		fluid := err == nil && c.Value == "1"
-		err = bookTmpl.Execute(w, struct {
+		if err := bookTmpl.Execute(w, struct {
 			Book
 			Pagination
 			Query           query
@@ -167,8 +166,7 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 			query{r.URL.Query()},
 			showOrigToolbox,
 			fluid,
-		})
-		if err != nil {
+		}); err != nil {
 			logError(err)
 		}
 
@@ -215,7 +213,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		err := addTmpl.Execute(w, struct {
+		if err := addTmpl.Execute(w, struct {
 			Errors []interface{}
 			Title  string
 			Type   string
@@ -223,8 +221,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 			errors,
 			title,
 			uploadType,
-		})
-		if err != nil {
+		}); err != nil {
 			logError(err)
 		}
 
@@ -323,8 +320,7 @@ func (a *App) RemoveBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	err = removeTmpl.Execute(w, books)
-	if err != nil {
+	if err := removeTmpl.Execute(w, books); err != nil {
 		logError(err)
 	}
 }
@@ -347,15 +343,13 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = readTmpl.Execute(w,
-		struct {
-			Book
-			LastVariants bool
-		}{
-			book,
-			r.FormValue("last") != "",
-		})
-	if err != nil {
+	if err := readTmpl.Execute(w, struct {
+		Book
+		LastVariants bool
+	}{
+		book,
+		r.FormValue("last") != "",
+	}); err != nil {
 		logError(err)
 	}
 }
@@ -780,17 +774,15 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 			edit = true
 		}
 
-		err = scratchpadTmpl.Execute(w,
-			struct {
-				Book Book
-				Scratchpad
-				Edit bool
-			}{
-				book,
-				sp,
-				edit,
-			})
-		if err != nil {
+		if err := scratchpadTmpl.Execute(w, struct {
+			Book Book
+			Scratchpad
+			Edit bool
+		}{
+			book,
+			sp,
+			edit,
+		}); err != nil {
 			logError(err)
 		}
 
