@@ -854,10 +854,10 @@ func (db *DB) RemoveVersion(bid, fid, vid uint64) (int, error) {
 	return fragmentsTranslated, nil
 }
 
-func (db *DB) Scratchpad(bid uint64) (*Book, *Scratchpad, error) {
+func (db *DB) Scratchpad(bid uint64) (Book, Scratchpad, error) {
 	book, err := db.BookByID(bid)
 	if err != nil {
-		return nil, nil, err
+		return Book{}, Scratchpad{}, err
 	}
 	var sp Scratchpad
 	err = db.View(func(tx *bolt.Tx) error {
@@ -870,7 +870,7 @@ func (db *DB) Scratchpad(bid uint64) (*Book, *Scratchpad, error) {
 		}
 		return nil
 	})
-	return &book, &sp, err
+	return book, sp, err
 }
 
 func (db *DB) UpdateScratchpad(bid uint64, text string) error {

@@ -769,7 +769,7 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 		edit := r.FormValue("edit") != ""
 		book, sp, err := a.db.Scratchpad(bid)
 		if err != nil {
-			if book == nil {
+			if err == ErrNotFound {
 				http.NotFound(w, r)
 				return
 			}
@@ -781,9 +781,9 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = scratchpadTmpl.Execute(w,
-			&struct {
-				Book *Book
-				*Scratchpad
+			struct {
+				Book Book
+				Scratchpad
 				Edit bool
 			}{
 				book,
