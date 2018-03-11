@@ -51,7 +51,7 @@ func internalError(w http.ResponseWriter, err error) {
 	http.Error(w, "internal server error", http.StatusInternalServerError)
 }
 
-func Uint64(s string) (uint64, error) {
+func u64(s string) (uint64, error) {
 	return strconv.ParseUint(s, 10, 64)
 }
 
@@ -83,7 +83,7 @@ func (a *App) Index(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -327,7 +327,7 @@ func (a *App) RemoveBook(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -364,7 +364,7 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -451,12 +451,12 @@ func (a *App) ExportBook(w http.ResponseWriter, r *http.Request) {
 func (a *App) Fragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
@@ -484,12 +484,12 @@ func (a *App) Fragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) AddFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	after, _ := Uint64(r.FormValue("after"))
+	after, _ := u64(r.FormValue("after"))
 	text := strings.TrimSpace(r.FormValue("text"))
 	if text == "" {
 		http.Error(w, "Text must not be empty!", http.StatusBadRequest)
@@ -521,12 +521,12 @@ func (a *App) AddFragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) UpdateFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
@@ -557,12 +557,12 @@ func (a *App) UpdateFragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) RemoveFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
@@ -589,12 +589,12 @@ func (a *App) RemoveFragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) StarFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
@@ -617,12 +617,12 @@ func (a *App) StarFragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) CommentFragment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
@@ -650,17 +650,17 @@ func (a *App) CommentFragment(w http.ResponseWriter, r *http.Request) {
 func (a *App) Translate(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
 	}
-	vid, err := Uint64(r.FormValue("version_id"))
+	vid, err := u64(r.FormValue("version_id"))
 	if err != nil {
 		http.Error(w, "Invalid version ID", http.StatusBadRequest)
 		return
@@ -698,17 +698,17 @@ func (a *App) Translate(w http.ResponseWriter, r *http.Request) {
 func (a *App) RemoveVersion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
-	fid, err := Uint64(vars["fragment_id"])
+	fid, err := u64(vars["fragment_id"])
 	if err != nil {
 		http.Error(w, "Invalid fragment ID", http.StatusBadRequest)
 		return
 	}
-	vid, err := Uint64(vars["version_id"])
+	vid, err := u64(vars["version_id"])
 	if err != nil {
 		http.Error(w, "Invalid version ID", http.StatusBadRequest)
 		return
@@ -752,7 +752,7 @@ func (a *App) Backup(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bid, err := Uint64(vars["book_id"])
+	bid, err := u64(vars["book_id"])
 	if err != nil {
 		http.NotFound(w, r)
 		return
