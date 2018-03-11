@@ -474,7 +474,7 @@ func (db *DB) AddTranslatedBook(title string, fragments [][]string) (uint64, err
 					Updated: now,
 					Text:    translationText,
 				}
-				if err := marshal(vb, vid, &vers); err != nil {
+				if err := marshal(vb, vid, vers); err != nil {
 					return err
 				}
 				versionIDs = []uint64{vid}
@@ -518,7 +518,7 @@ func (db *DB) UpdateBookTitle(bid uint64, title string) error {
 			return ErrNotFound
 		}
 		book.Title = title
-		return marshal(b, bid, &book)
+		return marshal(b, bid, book)
 	})
 }
 
@@ -589,7 +589,7 @@ func (db *DB) AddFragment(bid, fidAfter uint64, text string) (Fragment, error) {
 
 		book.LastActivity = now
 
-		return marshal(b, bid, &book)
+		return marshal(b, bid, book)
 	}); err != nil {
 		return Fragment{}, err
 	}
@@ -618,12 +618,13 @@ func (db *DB) UpdateFragment(bid, fid uint64, text string) error {
 			return ErrNotFound
 		}
 		f.Text = text
-		if err := marshal(fb, fid, &f); err != nil {
+		if err := marshal(fb, fid, f); err != nil {
 			return err
 		}
 
 		book.LastActivity = now
-		return marshal(b, bid, &book)
+
+		return marshal(b, bid, book)
 	})
 }
 
@@ -662,7 +663,7 @@ func (db *DB) RemoveFragment(bid, fid uint64) (int, error) {
 		}
 		fragmentsTranslated = book.FragmentsTranslated
 
-		return marshal(b, bid, &book)
+		return marshal(b, bid, book)
 	}); err != nil {
 		return 0, err
 	}
@@ -694,7 +695,7 @@ func (db *DB) StarFragment(bid, fid uint64) error {
 
 		f.Starred = true
 
-		return marshal(fb, fid, &f)
+		return marshal(fb, fid, f)
 	})
 }
 
@@ -712,7 +713,7 @@ func (db *DB) UnstarFragment(bid, fid uint64) error {
 
 		f.Starred = false
 
-		return marshal(fb, fid, &f)
+		return marshal(fb, fid, f)
 	})
 }
 
@@ -739,7 +740,7 @@ func (db *DB) CommentFragment(bid, fid uint64, text string) error {
 
 		f.Comment = text
 
-		return marshal(fb, fid, &f)
+		return marshal(fb, fid, f)
 	})
 }
 
@@ -776,7 +777,7 @@ func (db *DB) Translate(bid, fid, vidOrZero uint64, text string) (TranslationVer
 		}
 		fragmentsTranslated = book.FragmentsTranslated
 
-		if err := marshal(b, bid, &book); err != nil {
+		if err := marshal(b, bid, book); err != nil {
 			return err
 		}
 
@@ -784,7 +785,7 @@ func (db *DB) Translate(bid, fid, vidOrZero uint64, text string) (TranslationVer
 		if vid := vidOrZero; vid == 0 {
 			vid, _ = vb.NextSequence()
 			f.VersionsIDs = append(f.VersionsIDs, vid)
-			if err := marshal(fb, fid, &f); err != nil {
+			if err := marshal(fb, fid, f); err != nil {
 				return err
 			}
 			vers.ID = vid
@@ -800,7 +801,7 @@ func (db *DB) Translate(bid, fid, vidOrZero uint64, text string) (TranslationVer
 		vers.Updated = now
 		vers.Text = text
 
-		return marshal(vb, vers.ID, &vers)
+		return marshal(vb, vers.ID, vers)
 	})
 	if err != nil {
 		return TranslationVersion{}, 0, err
@@ -836,7 +837,7 @@ func (db *DB) RemoveVersion(bid, fid, vid uint64) (int, error) {
 		}
 		f.VersionsIDs = append(f.VersionsIDs[:vindex], f.VersionsIDs[vindex+1:]...)
 
-		if err := marshal(fb, f.ID, &f); err != nil {
+		if err := marshal(fb, f.ID, f); err != nil {
 			return err
 		}
 
@@ -846,7 +847,7 @@ func (db *DB) RemoveVersion(bid, fid, vid uint64) (int, error) {
 		}
 		fragmentsTranslated = book.FragmentsTranslated
 
-		return marshal(b, bid, &book)
+		return marshal(b, bid, book)
 	}); err != nil {
 		return 0, err
 	}
@@ -885,7 +886,7 @@ func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 		}
 		sp.Updated = now
 		sp.Text = text
-		return marshal(b, bid, &sp)
+		return marshal(b, bid, sp)
 	})
 	return err
 }
@@ -926,7 +927,7 @@ func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {
 		}
 
 		var err error
-		data, err = json.Marshal(&struct {
+		data, err = json.Marshal(struct {
 			Book        `json:"book"`
 			Fragments   []Fragment           `json:"fragments"`
 			Versions    []TranslationVersion `json:"versions"`
@@ -981,7 +982,7 @@ func (db *DB) ImportBookFromJSON(data []byte) (uint64, error) {
 			vid, _ := vb.NextSequence()
 			vmap[v.ID] = vid
 			v.ID = vid
-			if err := marshal(vb, vid, &v); err != nil {
+			if err := marshal(vb, vid, v); err != nil {
 				return err
 			}
 		}
@@ -994,12 +995,12 @@ func (db *DB) ImportBookFromJSON(data []byte) (uint64, error) {
 			for j, vid := range f.VersionsIDs {
 				f.VersionsIDs[j] = vmap[vid]
 			}
-			if err := marshal(fb, fid, &f); err != nil {
+			if err := marshal(fb, fid, f); err != nil {
 				return err
 			}
 		}
 
-		if err := marshal(b, bid, &book); err != nil {
+		if err := marshal(b, bid, book); err != nil {
 			return err
 		}
 
