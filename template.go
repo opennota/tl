@@ -42,7 +42,6 @@ var (
 	bookTmpl       = mustParse("book")
 	removeTmpl     = mustParse("remove")
 	readTmpl       = mustParse("read")
-	adminTmpl      = mustParse("admin")
 	scratchpadTmpl = mustParse("scratchpad")
 
 	rBigWords = regexp.MustCompile(`[^\s<>&;]{32,}`)

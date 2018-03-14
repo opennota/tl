@@ -32,9 +32,6 @@
           <li class="active">
             <a href="/">Index</a>
           </li>
-          <li>
-            <a href="/admin">Admin</a>
-          </li>
         </ul>
       </nav>
 
@@ -46,6 +43,10 @@
           <a href="/remove" type="button" class="btn btn-default button-remove">Remove</a>
         {{ end }}
       </div>
+
+      {{ if . }}
+        <a class="btn btn-default pull-right" href="/backup">Backup</a>
+      {{ end }}
 
       {{ if . }}
         <table class="table table-condensed table-striped table-hover table-borderless">

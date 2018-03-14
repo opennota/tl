@@ -732,12 +732,6 @@ func (a *App) RemoveVersion(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (a *App) Admin(w http.ResponseWriter, _ *http.Request) {
-	if err := adminTmpl.Execute(w, nil); err != nil {
-		logError(err)
-	}
-}
-
 func (a *App) Backup(w http.ResponseWriter, r *http.Request) {
 	if err := a.db.View(func(tx *bolt.Tx) error {
 		w.Header().Set("Content-Type", "application/octet-stream")
