@@ -18,10 +18,10 @@
             <a href="/">Index</a>
           </li>
           <li>
-            <a href="/book/{{ .Book.ID }}">{{ .Book.Title }}</a>
+            <a href="{{ if .URL }}{{ .URL }}{{ else }}/book/{{ .Book.ID }}{{ end }}">{{ .Book.Title }}</a>
           </li>
           <li class="active">
-            <a href="/book/{{ .Book.ID }}/scratchpad">Scratchpad</a>
+            <a href="/book/{{ .Book.ID }}/scratchpad?url={{ .URL }}">Scratchpad</a>
           </li>
         </ul>
       </nav>
@@ -29,7 +29,7 @@
       <br>
 
       {{ if not .Edit }}
-        <a href="/book/{{ .Book.ID }}/scratchpad?edit=1" class="btn btn-default">
+        <a href="/book/{{ .Book.ID }}/scratchpad?edit=1&url={{ .URL }}" class="btn btn-default">
           Edit
         </a>
         <br>
@@ -37,7 +37,7 @@
       {{ end }}
 
       <div class="row">
-        <form action="/book/{{ .Book.ID }}/scratchpad" method="POST"
+        <form action="/book/{{ .Book.ID }}/scratchpad?url={{ .URL }}" method="POST"
           style="{{ if not .Edit }}display: none;{{ end }}">
           <div class="form-group">
             <textarea id="markup" name="text" class="form-control" rows="10" autofocus>

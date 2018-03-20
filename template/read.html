@@ -15,17 +15,17 @@
             <a href="/">Index</a>
           </li>
           <li>
-            <a href="/book/{{ .ID }}">{{ .Title }}</a>
+            <a href="{{ if .URL }}{{ .URL }}{{ else }}/book/{{ .ID }}{{ end }}">{{ .Title }}</a>
           </li>
           <li class="active">
-            <a href="/book/{{ .ID }}/read">Read</a>
+            <a href="/book/{{ .ID }}/read?url={{ .URL }}">Read</a>
           </li>
         </ul>
       </nav>
 
       <div style="float: right;">
         {{ if .LastVariants }}
-          <a href="/book/{{ .ID }}/read">First</a>
+          <a href="/book/{{ .ID }}/read?url={{ .URL }}">First</a>
         {{ else }}
           First
         {{ end }}
@@ -33,7 +33,7 @@
         {{ if .LastVariants }}
           Last
         {{ else }}
-          <a href="/book/{{ .ID }}/read?last=1">Last</a>
+          <a href="/book/{{ .ID }}/read?last=1&url={{ .URL }}">Last</a>
         {{ end }}
       </div>
 

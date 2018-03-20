@@ -134,7 +134,7 @@
             <a href="/book/{{ .ID }}">{{ .Title }}</a>
           </li>
           <li>
-            <a href="/book/{{ .ID }}/scratchpad">Scratchpad</a>
+            <a href="/book/{{ .ID }}/scratchpad?url={{ .URL }}">Scratchpad</a>
           </li>
         </ul>
       </nav>
@@ -252,7 +252,7 @@
                   <i class="percent">{{ pct .FragmentsTranslated .FragmentsTotal }}</i>%
                 </i>
                 -
-                <a href="/book/{{ .ID }}/read">Read</a>
+                <a href="/book/{{ .ID }}/read?url={{ .URL }}">Read</a>
               </span>
             </div>
           </div>

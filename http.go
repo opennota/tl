@@ -158,12 +158,14 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 			Book
 			Pagination
 			Query           query
+			URL             string
 			ShowOrigToolbox bool
 			Fluid           bool
 		}{
 			book,
 			pg,
 			query{r.URL.Query()},
+			r.URL.String(),
 			showOrigToolbox,
 			fluid,
 		}); err != nil {
@@ -345,9 +347,11 @@ func (a *App) ReadBook(w http.ResponseWriter, r *http.Request) {
 
 	if err := readTmpl.Execute(w, struct {
 		Book
+		URL          string
 		LastVariants bool
 	}{
 		book,
+		r.FormValue("url"),
 		r.FormValue("last") != "",
 	}); err != nil {
 		logError(err)
@@ -770,10 +774,12 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 
 		if err := scratchpadTmpl.Execute(w, struct {
 			Book Book
+			URL  string
 			Scratchpad
 			Edit bool
 		}{
 			book,
+			r.FormValue("url"),
 			sp,
 			edit,
 		}); err != nil {
@@ -786,6 +792,6 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 			internalError(w, err)
 			return
 		}
-		http.Redirect(w, r, r.URL.Path, http.StatusFound)
+		http.Redirect(w, r, r.URL.String(), http.StatusFound)
 	}
 }
