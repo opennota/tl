@@ -198,6 +198,7 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 			internalError(w, err)
 			return
 		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
