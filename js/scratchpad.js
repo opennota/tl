@@ -4,7 +4,7 @@
     let md = markdownit({
       linkify: true,
       typographer: true,
-      quotes: '«»„“'
+      quotes: '«»„“',
     });
     $('#markdown-it').html(md.render($('#markup').text()));
     $('#markup')
@@ -18,4 +18,4 @@
       });
   });
 })();
-// vim: et sw=2
+// vim: ts=2 sts=2 sw=2 et

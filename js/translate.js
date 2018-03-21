@@ -9,7 +9,7 @@
     if (total != fragments_total || translated != fragments_translated) {
       fragments_total = total;
       fragments_translated = translated;
-      let pct = (total === 0) ? 0 : Math.floor(100 * translated / total);
+      let pct = total === 0 ? 0 : Math.floor(100 * translated / total);
       $('.progress-bar').attr('style', 'width:' + pct + '%');
       $('.progress .percent').text(pct);
       $('.progress .fraction').attr('title', translated + '/' + total);
@@ -26,7 +26,10 @@
     let $div = $target.closest('div[id^=v]');
     let vid = $div.length ? $div.attr('id').substr(1) : 0;
     let $form = $($('#translate-form-tmpl').html());
-    let origLength = $row.find('td.o .text').text().replace(/\n/g, '').length;
+    let origLength = $row
+      .find('td.o .text')
+      .text()
+      .replace(/\n/g, '').length;
     $form.find('.cnt-o').text(origLength);
     $form.attr('action', '/book/' + book_id + '/' + fid + '/translate');
     $form.find('[name=version_id]').attr('value', vid);
@@ -35,9 +38,11 @@
     let $textarea = $form.find('textarea');
     let text = $div.find('.text').text();
     $textarea.text(text);
-    $textarea.on('keyup change blur click', () => {
-      $form.find('.cnt-t').text($textarea.val().replace(/\n/g, '').length);
-    }).keyup();
+    $textarea
+      .on('keyup change blur click', () => {
+        $form.find('.cnt-t').text($textarea.val().replace(/\n/g, '').length);
+      })
+      .keyup();
     let $next = null;
     $form.ajaxForm({
       dataType: 'json',
@@ -67,7 +72,7 @@
         let $alert = $($('#alert-tmpl').html());
         $alert.append(data.responseText);
         $form.find('.alert-container').html($alert);
-      }
+      },
     });
     cancelEdit = () => {
       cancelEdit = null;
@@ -113,7 +118,10 @@
   function closeCommentary(e) {
     let $target = $(e.target);
     let $commentaryRow = $target.closest('tr');
-    $commentaryRow.removeClass('shown').find('td').html('');
+    $commentaryRow
+      .removeClass('shown')
+      .find('td')
+      .html('');
     let $comment = $commentaryRow.prev().find('.x-comment');
     $comment.removeClass('fa-times-circle');
     if ($comment.data('comment')) {
@@ -144,11 +152,11 @@
     let $submit = $form.find(':submit');
     let $edit = $form.find('.btn-edit');
     let $div = $form.find('.text');
-    let render = (text) => {
+    let render = text => {
       let md = markdownit({
         linkify: true,
         typographer: true,
-        quotes: '«»„“'
+        quotes: '«»„“',
       });
       $div.html(md.render(String(text)));
       $div.on('dblclick', editCommentary);
@@ -184,7 +192,7 @@
         let $alert = $($('#alert-tmpl').html());
         $alert.append(data.responseText);
         $form.find('.alert-container').html($alert);
-      }
+      },
     });
     let text = $target.data('comment');
     if (text) {
@@ -192,58 +200,77 @@
     } else {
       editCommentary();
     }
-    $commentaryRow.find('td').html('').append($form);
+    $commentaryRow
+      .find('td')
+      .html('')
+      .append($form);
   }
 
   function remove(e) {
     let $div = $(e.target).closest('div[id^=v]');
     let vid = $div.attr('id').substr(1);
-    let fid = $div.closest('tr').attr('id').substr(1);
+    let fid = $div
+      .closest('tr')
+      .attr('id')
+      .substr(1);
     let text = $div.find('p.text').html();
     let dlg = bootbox.confirm({
-      message: '<b>Remove the following version?</b><br><br><blockquote>' + text + '</blockquote>',
+      message:
+        '<b>Remove the following version?</b><br><br><blockquote>' +
+        text +
+        '</blockquote>',
       buttons: {
         confirm: {
           label: 'Remove',
-          className: 'btn-danger'
+          className: 'btn-danger',
         },
       },
       callback: result => {
         if (!result) return;
         $.ajax({
           method: 'DELETE',
-          url: '/book/' + book_id + '/' + fid + '/' + vid
-        }).done((data) => {
-          dlg.modal('hide');
-          $div.remove();
-          updateProgress(fragments_total, data.fragments_translated);
-        }).fail((xhr, status, err) => alert(err));
-      }
+          url: '/book/' + book_id + '/' + fid + '/' + vid,
+        })
+          .done(data => {
+            dlg.modal('hide');
+            $div.remove();
+            updateProgress(fragments_total, data.fragments_translated);
+          })
+          .fail((xhr, status, err) => alert(err));
+      },
     });
   }
 
   function star(e) {
     let $icon = $(e.target);
-    let fid = $icon.closest('tr').attr('id').substr(1);
+    let fid = $icon
+      .closest('tr')
+      .attr('id')
+      .substr(1);
     $.ajax({
       method: 'POST',
-      url: '/book/' + book_id + '/' + fid + '/star'
-    }).done(() => {
-      $icon.removeClass('x-star fa-star-o')
-        .addClass('x-unstar fa-star');
-    }).fail((xhr, status, err) => alert(err));
+      url: '/book/' + book_id + '/' + fid + '/star',
+    })
+      .done(() => {
+        $icon.removeClass('x-star fa-star-o').addClass('x-unstar fa-star');
+      })
+      .fail((xhr, status, err) => alert(err));
   }
 
   function unstar(e) {
     let $icon = $(e.target);
-    let fid = $icon.closest('tr').attr('id').substr(1);
+    let fid = $icon
+      .closest('tr')
+      .attr('id')
+      .substr(1);
     $.ajax({
       method: 'DELETE',
-      url: '/book/' + book_id + '/' + fid + '/star'
-    }).done(() => {
-      $icon.removeClass('x-unstar fa-star')
-        .addClass('x-star fa-star-o');
-    }).fail((xhr, status, err) => alert(err));
+      url: '/book/' + book_id + '/' + fid + '/star',
+    })
+      .done(() => {
+        $icon.removeClass('x-unstar fa-star').addClass('x-star fa-star-o');
+      })
+      .fail((xhr, status, err) => alert(err));
   }
 
   function toggleFluid() {
@@ -281,7 +308,7 @@
         let $alert = $($('#alert-tmpl').html());
         $alert.append(data.responseText);
         $form.find('.alert-container').html($alert);
-      }
+      },
     });
     cancelEditOrig = () => {
       cancelEditOrig = null;
@@ -303,28 +330,33 @@
     let fid = $row.attr('id').substr(1);
     let text = $row.find('td.o p.text').html();
     let dlg = bootbox.confirm({
-      message: '<b>Remove the following fragment?</b><br><br><blockquote>' + text + '</blockquote>',
+      message:
+        '<b>Remove the following fragment?</b><br><br><blockquote>' +
+        text +
+        '</blockquote>',
       buttons: {
         confirm: {
           label: 'Remove',
-          className: 'btn-danger'
+          className: 'btn-danger',
         },
       },
       callback: result => {
         if (!result) return;
         $.ajax({
           method: 'DELETE',
-          url: '/book/' + book_id + '/' + fid
-        }).done((data) => {
-          dlg.modal('hide');
-          $row.remove();
-          updateProgress(fragments_total - 1, data.fragments_translated);
-          let num_filtered = +$('.button-filter sup').text();
-          if (num_filtered) {
-            $('.button-filter sup').text(num_filtered - 1);
-          }
-        }).fail((xhr, status, err) => alert(err));
-      }
+          url: '/book/' + book_id + '/' + fid,
+        })
+          .done(data => {
+            dlg.modal('hide');
+            $row.remove();
+            updateProgress(fragments_total - 1, data.fragments_translated);
+            let num_filtered = +$('.button-filter sup').text();
+            if (num_filtered) {
+              $('.button-filter sup').text(num_filtered - 1);
+            }
+          })
+          .fail((xhr, status, err) => alert(err));
+      },
     });
   }
 
@@ -338,27 +370,54 @@
     };
     $newRow
       .on('click', '.cancel', cancelEditOrig)
-      .on('click', '.x-orig-up', () => $newRow.prev().prev().before($newRow))
-      .on('click', '.x-orig-down', () => $newRow.next().next().after($newRow));
+      .on('click', '.x-orig-up', () =>
+        $newRow
+          .prev()
+          .prev()
+          .before($newRow)
+      )
+      .on('click', '.x-orig-down', () =>
+        $newRow
+          .next()
+          .next()
+          .after($newRow)
+      );
     let $form = $newRow.find('form');
     $form.attr('action', '/book/' + book_id + '/fragments');
     let $submit = $form.find(':submit');
     $form.ajaxForm({
       dataType: 'json',
-      beforeSerialize: ($form) => {
-        let prev_id = $newRow.prev().prev().attr('id');
-        let after = (prev_id) ? prev_id.substr(1) : '';
+      beforeSerialize: $form => {
+        let prev_id = $newRow
+          .prev()
+          .prev()
+          .attr('id');
+        let after = prev_id ? prev_id.substr(1) : '';
         $form.find('input[name=after]').attr('value', after);
       },
       beforeSubmit: () => $submit.attr('disabled', true),
       success: data => {
         cancelEditOrig = null;
-        $newRow.find('td:first-child').html('<i class="fa fa-star-o x-star"></i>');
-        $newRow.find('td:nth-child(3)').html('<i class="fa fa-arrow-right x-translate"></i>');
-        $newRow.find('td:last-child').html('<i class="fa fa-comment-o x-comment"></i>');
+        $newRow
+          .find('td:first-child')
+          .html('<i class="fa fa-star-o x-star"></i>');
+        $newRow
+          .find('td:nth-child(3)')
+          .html('<i class="fa fa-arrow-right x-translate"></i>');
+        $newRow
+          .find('td:last-child')
+          .html('<i class="fa fa-comment-o x-comment"></i>');
         let $html = $($('#orig-tmpl').html());
         $html.find('.text').html(data.text);
-        $html = $html.add('<a class="permalink" href="/book/' + book_id + '/' + data.id + '">#' + data.seq_num + '</a>');
+        $html = $html.add(
+          '<a class="permalink" href="/book/' +
+            book_id +
+            '/' +
+            data.id +
+            '">#' +
+            data.seq_num +
+            '</a>'
+        );
         $newRow.find('td.o > form').replaceWith($html);
         $newRow.removeClass('editing').attr('id', 'f' + data.id);
         $newRow.after('<tr class="commentary"><td colspan="5"></td></tr>');
@@ -369,25 +428,33 @@
         let $alert = $($('#alert-tmpl').html());
         $alert.append(data.responseText);
         $form.find('.alert-container').html($alert);
-      }
+      },
     });
     if (e) {
-      $(e.target).closest('tr').next().after($newRow);
+      $(e.target)
+        .closest('tr')
+        .next()
+        .after($newRow);
     } else {
       $('.translator > tbody').append($newRow);
     }
-    $textarea.on('keydown', e => {
-      if (e.ctrlKey && e.which == 13) {
-        e.stopPropagation();
-        $submit.click();
-      }
-    }).autoGrow().focus();
+    $textarea
+      .on('keydown', e => {
+        if (e.ctrlKey && e.which == 13) {
+          e.stopPropagation();
+          $submit.click();
+        }
+      })
+      .autoGrow()
+      .focus();
   }
 
   function toggleOrigToolbox(e) {
     $('.translator').toggleClass('show-orig-toolbox');
-    Cookies.set('show-orig-toolbox',
-      $('.translator').hasClass('show-orig-toolbox') ? 1 : 0);
+    Cookies.set(
+      'show-orig-toolbox',
+      $('.translator').hasClass('show-orig-toolbox') ? 1 : 0
+    );
     $.scrollTo($(e.target).closest('tr'));
   }
   $(document).ready(() => {
@@ -407,7 +474,9 @@
         if ($previous) {
           $previous.find('.x-edit').click();
         } else {
-          $('td.t > div[id^=v]:first-child .x-edit').first().click();
+          $('td.t > div[id^=v]:first-child .x-edit')
+            .first()
+            .click();
         }
       }
     });
@@ -418,10 +487,17 @@
     updateProgress(fragments_total, fragments_translated);
     $('.filter-dropdown')
       .on('click', 'label', e => {
-        $(e.target).closest('label').find('[type="radio"]').prop('checked', true);
+        $(e.target)
+          .closest('label')
+          .find('[type="radio"]')
+          .prop('checked', true);
       })
       .on('click', '.dropdown-menu', e => e.stopPropagation());
-    $('#orig_contains, #trans_contains').on('click', e => $(e.target).next().focus());
+    $('#orig_contains, #trans_contains').on('click', e =>
+      $(e.target)
+        .next()
+        .focus()
+    );
     $('.fa-window-restore').on('click', toggleFluid);
     if (location.hash) {
       $(location.hash).addClass('highlight');

@@ -15,7 +15,7 @@
         buttons: {
           confirm: {
             label: 'Remove',
-            className: 'btn-danger'
+            className: 'btn-danger',
           },
         },
         callback: result => {
@@ -23,13 +23,15 @@
           $.ajax({
             method: 'DELETE',
             url: '/book/' + bid,
-          }).done(() => {
-            dlg.modal('hide');
-            location.href = '/';
-          }).fail((xhr, status, err) => alert(err));
-        }
+          })
+            .done(() => {
+              dlg.modal('hide');
+              location.href = '/';
+            })
+            .fail((xhr, status, err) => alert(err));
+        },
       });
     });
   });
 })();
-// vim: et sw=2
+// vim: ts=2 sts=2 sw=2 et
