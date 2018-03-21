@@ -240,7 +240,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 			sess, _ := store.Get(r, "tl_sess")
 			sess.AddFlash("Title must not be empty!")
 			sess.Save(r, w)
-			http.Redirect(w, r, r.URL.Path, http.StatusFound)
+			http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 			return
 		}
 
@@ -253,7 +253,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 				sess.AddFlash("Content must not be empty!")
 				sess.Values["title"] = title
 				sess.Save(r, w)
-				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 				return
 			}
 
@@ -280,7 +280,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 				sess.AddFlash("Could not parse CSV file.")
 				sess.Values["title"] = title
 				sess.Save(r, w)
-				http.Redirect(w, r, r.URL.Path, http.StatusFound)
+				http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 				return
 			}
 
@@ -311,7 +311,7 @@ func (a *App) AddBook(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		http.Redirect(w, r, "/book/"+fmt.Sprint(bid), http.StatusFound)
+		http.Redirect(w, r, "/book/"+fmt.Sprint(bid), http.StatusSeeOther)
 	}
 }
 
@@ -793,6 +793,6 @@ func (a *App) Scratchpad(w http.ResponseWriter, r *http.Request) {
 			internalError(w, err)
 			return
 		}
-		http.Redirect(w, r, r.URL.String(), http.StatusFound)
+		http.Redirect(w, r, r.URL.String(), http.StatusSeeOther)
 	}
 }
