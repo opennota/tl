@@ -4,9 +4,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <script src="/js/lib/jquery.min.js"></script>
+    <script src="/js/lib/popper.min.js"></script>
+    <script src="/js/read.js"></script>
+    <script>const book_id = +'{{ .ID }}';</script>
   </head>
   <body>
-    <div class="container">
+    <div id="popper" class="popper" role="tooltip" style="visibility: hidden;">
+      <div class="popper__arrow"></div>
+      <div class="popper__inner">
+        <a class="permalink"></a>
+      </div>
+    </div>
+
+    <div class="container read-container">
       <h1>{{ .Title }} - Read</h1>
 
       <nav>
@@ -39,19 +51,21 @@
 
       <br>
 
-      {{- range .Fragments }}
-        <p class="text">
-          {{- if gt (len .Versions) 0 -}}
-            {{- if $.LastVariants -}}
-              {{- render ((index .Versions (dec (len .Versions))).Text) -}}
+      <div class="fragments">
+        {{- range $index, $f := .Fragments }}
+          <p class="text" data-fid="{{ .ID }}"{{ if ne (inc $index) .ID }} data-seq="{{ inc $index }}"{{ end }}>
+            {{- if gt (len .Versions) 0 -}}
+              {{- if $.LastVariants -}}
+                {{- render (index .Versions (dec (len .Versions))).Text -}}
+              {{- else -}}
+                {{- render (index .Versions 0).Text -}}
+              {{- end -}}
             {{- else -}}
-              {{- render ((index .Versions 0).Text) -}}
+              {{- render .Text -}}
             {{- end -}}
-          {{- else -}}
-            {{- render .Text -}}
-          {{- end -}}
-        </p>
-      {{- end }}
+          </p>
+        {{- end }}
+      </div>
     </div>
   </body>
 </html>
