@@ -500,7 +500,13 @@
     );
     $('.fa-window-restore').on('click', toggleFluid);
     if (location.hash) {
-      $(location.hash).addClass('highlight');
+      const $hl = $(location.hash);
+      $hl.addClass('highlight');
+      const removeHighlight = () => {
+        $hl.removeClass('highlight');
+        $(document).off('dblclick', removeHighlight);
+      };
+      $(document).on('dblclick', removeHighlight);
     }
   });
 })();
