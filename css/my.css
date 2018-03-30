@@ -281,7 +281,7 @@ tr.commentary.shown { display: table-row; }
   padding: 10px;
   z-index: 1;
 }
-.popper :link.permalink { color: white; }
+.popper a.permalink { color: white; }
 .popper .popper__arrow {
   width: 0;
   height: 0;
