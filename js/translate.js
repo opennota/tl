@@ -49,7 +49,7 @@
       beforeSerialize: () => {
         let text = $textarea.val();
         text = text.replace(/(^|\s)- /g, '$1— ');
-        text = text.replace(/(\s)-$/g, '$1 —');
+        text = text.replace(/(\s)-$/, '$1—');
         text = text.replace(/(^|[-\s([])"(\S)/g, '$1«$2');
         text = text.replace(/(\S)"([-\s.,!?:;…)\]]|$)/g, '$1»$2');
         text = text.replace(/\.\.\./g, '…');
