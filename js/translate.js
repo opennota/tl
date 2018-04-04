@@ -48,6 +48,7 @@
       dataType: 'json',
       beforeSerialize: () => {
         let text = $textarea.val();
+        if (!/[а-яё]/i.test(text)) return;
         text = text.replace(/(^|\s)- /g, '$1— ');
         text = text.replace(/(\s)-$/, '$1—');
         text = text.replace(/(^|[-\s([])"(\S)/g, '$1«$2');
