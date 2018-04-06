@@ -44,6 +44,19 @@
         {{ end }}
       </div>
 
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle button-tools" data-toggle="dropdown">
+          Tools
+          <span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-tools">
+          <li>
+            <a href="/aligner">Aligner</a>
+          </li>
+        </ul>
+      </div>
+
       {{ if . }}
         <a class="btn btn-default pull-right" href="/backup">Backup</a>
       {{ end }}

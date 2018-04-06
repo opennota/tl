@@ -34,6 +34,8 @@ var (
 		"datetimeStr": datetimeStr,
 		"dec":         dec,
 		"inc":         inc,
+		"max":         max,
+		"seq":         seq,
 		"render":      render,
 		"renderhl":    renderhl,
 	}
@@ -43,6 +45,7 @@ var (
 	removeTmpl     = mustParse("remove")
 	readTmpl       = mustParse("read")
 	scratchpadTmpl = mustParse("scratchpad")
+	alignerTmpl    = mustParse("aligner")
 
 	rBigWords = regexp.MustCompile(`[^\s<>&;]{32,}`)
 	r16Chars  = regexp.MustCompile(`.{16}`)
@@ -65,6 +68,21 @@ func mustParse(name string) *template.Template {
 func dec(a int) int { return a - 1 }
 
 func inc(a int) int { return a + 1 }
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func seq(n int) []int {
+	a := make([]int, n)
+	for i := 0; i < n; i++ {
+		a[i] = i
+	}
+	return a
+}
 
 func pct(a, b int) int {
 	if b == 0 {

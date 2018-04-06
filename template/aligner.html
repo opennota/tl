@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="/css/my.css">
+    <script src="/js/lib/jquery.min.js"></script>
+    <script src="/js/lib/bootstrap.min.js"></script>
+    <script src="/js/lib/bootbox.min.js"></script>
+    <script>
+      const pageNumber = +'{{ or .PageNumber -1 }}';
+      let nonce = +'{{ .Nonce }}';
+    </script>
+    <script src="/js/aligner.js"></script>
+  </head>
+  <body>
+    <div class="container aligner">
+      <h1>Aligner</h1>
+
+      <nav>
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="/">Index</a>
+          </li>
+          <li class="active">
+            <a href="/aligner">Aligner</a>
+          </li>
+        </ul>
+      </nav>
+
+      {{ if and (eq (len .Left) 0) (eq (len .Right) 0) }}
+        <br>
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/aligner">
+          <input type="hidden" name="nonce" value="{{ .Nonce }}"></input>
+          <div class="form-group">
+            <label for="left" class="control-label">First text:</label>
+            <textarea id="left" name="left" class="form-control" rows="15" spellcheck="false" autofocus></textarea>
+          </div>
+          <div class="form-group">
+            <label for="right" class="control-label">Second text:</label>
+            <textarea id="right" name="right" class="form-control" rows="15" spellcheck="false"></textarea>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary pull-right">
+              Align
+            </button>
+          </div>
+        </form>
+      {{ else }}
+        <div class="btn-toolbar aligner-toolbar">
+          <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+              Download
+              <span class="caret"></span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-export">
+              <li>
+                <a href="/aligner?download=left">Plain text (left)</a>
+              </li>
+              <li>
+                <a href="/aligner?download=right">Plain text (right)</a>
+              </li>
+              <li>
+                <a href="/aligner?download=csv">CSV</a>
+              </li>
+            </ul>
+          </div>
+
+          <button type="submit" class="btn btn-default btn-xs button-clear">Clear</button>
+
+          <span class="aligner-help">Click to split, Shift+click to join</span>
+
+          <div class="btn-group btn-group-xs pull-right">
+            <div class="aligner-pager">
+              <form method="GET" action="/aligner">
+                <input class="form-control page-input" type="text" name="page" value="{{ .PageNumber }}" size="2"></form>/{{ .TotalPages }}
+              {{ pct .PageNumber .TotalPages }}%
+              <div class="btn-group btn-group-xs pull-right">
+                {{ if ge (dec .PageNumber) 1 }}
+                  {{ if eq .PageNumber 2 }}
+                    <a class="btn btn-default" rel="prev" href="/aligner">Previous</a>
+                  {{ else }}
+                    <a class="btn btn-default" rel="prev" href="/aligner?page={{ dec .PageNumber }}">Prev</a>
+                  {{ end }}
+                {{ end }}
+                <a class="btn btn-default" rel="next" href="/aligner?page={{ inc .PageNumber }}">Next</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {{ end }}
+
+      <table class="table table-condensed table-striped aligner-table">
+        {{ range $i := seq (max (len .Left) (len .Right)) }}
+          <tr>
+            <td>
+              <i class="fa fa-times icon-remove"></i>
+            </td>
+            <td class="left">
+              {{- if lt $i (len $.Left) -}}
+                {{- range $w := index $.Left $i -}}
+                  <span>{{ $w }}</span>
+                {{- end -}}
+              {{- end -}}
+            </td>
+            <td class="right">
+              {{- if lt $i (len $.Right) -}}
+                {{- range $w := index $.Right $i -}}
+                  <span>{{ $w }}</span>
+                {{- end -}}
+              {{- end -}}
+            </td>
+          </tr>
+        {{ end }}
+      </table>
+
+
+    </div>
+  </body>
+</html>
+

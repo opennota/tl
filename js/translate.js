@@ -168,7 +168,7 @@
     let editCommentary = () => {
       $div.off('dblclick');
       $edit.hide();
-      let $textarea = $('<textarea name="text" spellcheck="false"></textarea>');
+      let $textarea = $('<textarea name="text" spellcheck="false">');
       $div.html('').append($textarea);
       $textarea.text($target.data('comment'));
       $submit.attr('disabled', false).show();

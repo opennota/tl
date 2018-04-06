@@ -334,3 +334,49 @@ tr.commentary.shown { display: table-row; }
   margin-left: 0;
   margin-right: 0;
 }
+.table.aligner-table > tbody > tr > td { border-top: none; }
+.aligner-table { font-size: 16px; }
+.aligner-table { border-collapse: separate; }
+.aligner-table td:not(:first-child) {
+  width: 50%;
+  border-bottom: 1px dashed #777;
+}
+.aligner-table .icon-remove {
+  color: black;
+  opacity: 0;
+  cursor: pointer;
+}
+.aligner-table tr:hover .icon-remove { opacity: 0.5; }
+.aligner-table td:first-child > .icon-remove:hover { opacity: 1.0; }
+.aligner-table span:hover {
+  background-color: #adff2f;
+  border-left: 2px solid black;
+  padding-left: 5px;
+}
+.aligner-toolbar { margin-top: 20px; }
+.aligner-pager > form { display: inline-block; }
+.aligner-pager .btn[rel="prev"] {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  padding-left: 10px;
+}
+.aligner-pager .btn[rel="next"] {
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding-right: 10px;
+}
+.aligner .page-input {
+  height: 21px;
+  padding: 0;
+  text-align: right;
+}
+.aligner-table .left span:not(:first-child):before,
+.aligner-table .right span:not(:first-child):before {
+  content: " ";
+}
+.aligner-help {
+  margin-left: 20px;
+  color: grey;
+}
+.aligner .aligner-help { visibility: hidden; }
+.aligner:hover .aligner-help { visibility: visible; }
