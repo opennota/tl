@@ -380,3 +380,4 @@ tr.commentary.shown { display: table-row; }
 }
 .aligner .aligner-help { visibility: hidden; }
 .aligner:hover .aligner-help { visibility: visible; }
+.commentary blockquote { font-size: 14px; }
