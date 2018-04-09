@@ -36,24 +36,24 @@
       </nav>
 
       <div style="float: right;">
-        {{ if .LastVariants }}
+        {{- if .LastVariants }}
           <a href="/book/{{ .ID }}/read?url={{ .URL }}">First</a>
-        {{ else }}
+        {{- else }}
           First
-        {{ end }}
-        |
-        {{ if .LastVariants }}
+        {{- end }}
+          |
+        {{- if .LastVariants }}
           Last
-        {{ else }}
+        {{- else }}
           <a href="/book/{{ .ID }}/read?last=1&url={{ .URL }}">Last</a>
-        {{ end }}
+        {{- end }}
       </div>
 
       <br>
 
       <div class="fragments">
         {{- range $index, $f := .Fragments }}
-          <p class="text" data-fid="{{ .ID }}"{{ if ne (inc $index) .ID }} data-seq="{{ inc $index }}"{{ end }}>
+          <p data-fid="{{ .ID }}"{{ if ne (inc $index) .ID }} data-seq="{{ inc $index }}"{{ end }}>
             {{- if gt (len .Versions) 0 -}}
               {{- if $.LastVariants -}}
                 {{- render (index .Versions (dec (len .Versions))).Text -}}

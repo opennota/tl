@@ -269,8 +269,8 @@ td.complete-col {
 }
 tr.commentary { display: none; }
 tr.commentary.shown { display: table-row; }
-.read-container .text:hover,
-.read-container .text.active {
+.read-container .fragments > p:hover,
+.read-container .fragments > p.active {
   background-color: #fffbd5;
 }
 .popper {

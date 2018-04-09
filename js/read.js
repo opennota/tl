@@ -7,7 +7,7 @@
     const $node = $('#popper');
     const $link = $node.find('.permalink');
     let prevTarget;
-    $('.container').on('click', '.text', e => {
+    $('.container').on('click', '.fragments > p', e => {
       const $target = $(e.target);
       e.stopPropagation();
       if (popper) {
@@ -39,7 +39,7 @@
         popper.destroy();
         popper = null;
         $node.css('visibility', 'hidden');
-        $('.text.active').each((i, el) => $(el).removeClass('active'));
+        $('p.active').each((i, el) => $(el).removeClass('active'));
       }
     });
   });
