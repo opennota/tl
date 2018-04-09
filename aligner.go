@@ -147,6 +147,16 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 		nonce++
 		nonceMtx.Unlock()
 
+		pageNumber, _ := strconv.Atoi(r.FormValue("page"))
+		if pageNumber < 0 {
+			pageNumber = 1
+		}
+		i, _ := strconv.Atoi(r.FormValue("row"))
+		j, _ := strconv.Atoi(r.FormValue("word"))
+		side := r.FormValue("side")
+		offset := (pageNumber - 1) * rowsPerPage
+		i += offset
+
 		switch r.FormValue("op") {
 		default:
 			err := r.ParseMultipartForm(32 * 1024 * 1024)
@@ -158,12 +168,7 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/aligner", http.StatusSeeOther)
 
 		case "split":
-			pageNumber, _ := strconv.Atoi(r.FormValue("page"))
-			offset := (pageNumber - 1) * rowsPerPage
-			i, _ := strconv.Atoi(r.FormValue("row"))
-			j, _ := strconv.Atoi(r.FormValue("word"))
-			i += offset
-			if side := r.FormValue("side"); side == "left" {
+			if side == "left" {
 				left = append(left, nil)
 				copy(left[i+2:], left[i+1:])
 				left[i+1] = left[i][j:]
@@ -177,11 +182,6 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
 
 		case "join":
-			pageNumber, _ := strconv.Atoi(r.FormValue("page"))
-			offset := (pageNumber - 1) * rowsPerPage
-			i, _ := strconv.Atoi(r.FormValue("row"))
-			i += offset
-			side := r.FormValue("side")
 			var joined, bottom []string
 			if side == "left" {
 				if i+1 < len(left) {
@@ -210,10 +210,6 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode([][]string{joined, bottom})
 
 		case "rm":
-			pageNumber, _ := strconv.Atoi(r.FormValue("page"))
-			offset := (pageNumber - 1) * rowsPerPage
-			i, _ := strconv.Atoi(r.FormValue("row"))
-			i += offset
 			if i < len(left) {
 				left = append(left[:i], left[i+1:]...)
 			}
@@ -234,11 +230,6 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode([][]string{s, t})
 
 		case "edit":
-			pageNumber, _ := strconv.Atoi(r.FormValue("page"))
-			offset := (pageNumber - 1) * rowsPerPage
-			i, _ := strconv.Atoi(r.FormValue("row"))
-			i += offset
-			side := r.FormValue("side")
 			words := rSpace.Split(r.FormValue("text"), -1)
 			if side == "left" {
 				left[i] = words
