@@ -246,6 +246,24 @@
         },
       });
     });
+    $('.button-import').on('click', () => {
+      bootbox.prompt('Import with title:', title => {
+        if (!title || title.trim() == '') return;
+        $.ajax({
+          method: 'POST',
+          url: '/aligner',
+          data: {
+            op: 'import',
+            title: title,
+            nonce: nonce++,
+          },
+        })
+          .done(book_id => {
+            location.href = `/book/${book_id}`;
+          })
+          .fail(checkErr);
+      });
+    });
   });
 })();
 // vim: ts=2 sts=2 sw=2 et

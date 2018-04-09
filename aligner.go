@@ -243,6 +243,35 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 		case "clear":
 			left = nil
 			right = nil
+
+		case "import":
+			title := strings.TrimSpace(r.FormValue("title"))
+			if title == "" {
+				http.Error(w, "Title must not be empty!", http.StatusBadRequest)
+				return
+			}
+			records := make([][]string, 0, len(left))
+			for i, words := range left {
+				if len(words) == 0 {
+					continue
+				}
+				translation := ""
+				if i < len(right) {
+					translation = strings.Join(right[i], " ")
+				}
+				records = append(records, []string{
+					strings.Join(words, " "),
+					translation,
+				})
+			}
+			bid, err := a.db.AddTranslatedBook(title, records)
+			if err != nil {
+				internalError(w, err)
+				return
+			}
+
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(bid)
 		}
 
 	default:
