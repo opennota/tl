@@ -7,6 +7,7 @@
     <link type="text/css" rel="stylesheet" href="/css/font-awesome.min.css">
     <link type="text/css" rel="stylesheet" href="/css/my.css">
     <script src="/js/lib/jquery.min.js"></script>
+    <script src="/js/lib/jquery.autogrowtextarea.js"></script>
     <script src="/js/lib/bootstrap.min.js"></script>
     <script src="/js/lib/bootbox.min.js"></script>
     <script>
@@ -14,6 +15,25 @@
       let nonce = +'{{ .Nonce }}';
     </script>
     <script src="/js/aligner.js"></script>
+
+    <script id="row-tmpl" type="text/template">
+      <tr>
+        <td><i class="fa fa-times icon-remove"></i></td>
+        <td class="left"></td>
+        <td class="right"></td>
+      </tr>
+    </script>
+    <script id="edit-form-tmpl" type="text/template">
+      <form>
+        <div>
+          <textarea style="width: 95% !important;"></textarea>
+        </div>
+        <div>
+          <button class="btn btn-primary btn-xs button-save">Save</button>
+          <button class="btn btn-default btn-xs button-cancel">Cancel</button>
+        </div>
+      </form>
+    </script>
   </head>
   <body>
     <div class="container aligner">
@@ -71,7 +91,7 @@
 
           <button type="submit" class="btn btn-default btn-xs button-clear">Clear</button>
 
-          <span class="aligner-help">Click to split, Shift+click to join</span>
+          <span class="aligner-help">Click to split, Shift+click to join, Ctrl+click to edit</span>
 
           <div class="btn-group btn-group-xs pull-right">
             <div class="aligner-pager">

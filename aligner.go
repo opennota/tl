@@ -233,6 +233,22 @@ func (a *App) Aligner(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Content-Type", "application/json")
 			json.NewEncoder(w).Encode([][]string{s, t})
 
+		case "edit":
+			pageNumber, _ := strconv.Atoi(r.FormValue("page"))
+			offset := (pageNumber - 1) * rowsPerPage
+			i, _ := strconv.Atoi(r.FormValue("row"))
+			i += offset
+			side := r.FormValue("side")
+			words := rSpace.Split(r.FormValue("text"), -1)
+			if side == "left" {
+				left[i] = words
+			} else {
+				right[i] = words
+			}
+
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(words)
+
 		case "clear":
 			left = nil
 			right = nil

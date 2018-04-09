@@ -353,6 +353,7 @@ tr.commentary.shown { display: table-row; }
   border-left: 2px solid black;
   padding-left: 5px;
 }
+.aligner-table span:hover:not(:first-child) { margin-left: 5px; }
 .aligner-toolbar { margin-top: 20px; }
 .aligner-pager > form { display: inline-block; }
 .aligner-pager .btn[rel="prev"] {

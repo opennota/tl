@@ -5,12 +5,6 @@
 
   const rowsPerPage = 50; // keep in sync with aligner.go
 
-  const rowHTML = `<tr>
-<td><i class="fa fa-times icon-remove"></i></td>
-<td class="left"></td>
-<td class="right"></td>
-</tr>`;
-
   function flip(side) {
     return side === 'left' ? 'right' : 'left';
   }
@@ -72,7 +66,7 @@
       },
     })
       .done(() => {
-        const $newRow = $(rowHTML);
+        const $newRow = $($('#row-tmpl').text());
         const $nextRow = $tr.next();
         $tr.after($newRow);
         const $td = $newRow.find('.' + side);
@@ -97,6 +91,8 @@
   }
 
   function join(e) {
+    e.preventDefault();
+    e.stopPropagation();
     const $td = $(e.currentTarget);
     const $tr = $td.parent();
     const side = $td.attr('class');
@@ -156,7 +152,7 @@
         const $tbody = $tr.parent();
         $tr.remove();
         if (!data[0] && !data[1]) return;
-        const $newRow = $(rowHTML);
+        const $newRow = $($('#row-tmpl').text());
         if (data[0]) {
           appendWords($newRow.find('.left'), data[0]);
         }
@@ -168,12 +164,68 @@
       .fail(checkErr);
   }
 
+  function edit(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const $td = $(e.currentTarget);
+    const $tr = $td.parent();
+    const side = $td.attr('class');
+    const $children = $td.children();
+    const text = $children
+      .map((index, el) => $(el).text())
+      .get()
+      .join(' ');
+    const $form = $($('#edit-form-tmpl').text());
+    const $textarea = $form.find('textarea');
+    $textarea.text(text);
+    $td.html($form);
+    $form
+      .on('click', '.button-save', e => {
+        e.preventDefault();
+        const text = $textarea
+          .val()
+          .replace(/\s{2,}/g, ' ')
+          .replace(/^\s|\s$/g, '');
+        $.ajax({
+          method: 'POST',
+          url: '/aligner',
+          data: {
+            op: 'edit',
+            side: side,
+            page: pageNumber,
+            row: $tr.index(),
+            text: text,
+            nonce: nonce++,
+          },
+        })
+          .done(words => {
+            $td.html('');
+            appendWords($td, words);
+          })
+          .fail(checkErr);
+      })
+      .on('click', '.button-cancel', () => {
+        $td.html($children);
+      });
+    $textarea
+      .on('keydown', e => {
+        if (e.ctrlKey && e.which == 13) {
+          e.stopPropagation();
+          $form.find('.button-save').click();
+        }
+      })
+      .autoGrow()
+      .focus();
+  }
+
   $(document).ready(() => {
     $('.aligner-table')
       .on('click', 'span', split)
       .on('click', 'td', e => {
         if (e.shiftKey && !(e.ctrlKey || e.altKey)) {
           join(e);
+        } else if (e.ctrlKey && !(e.shiftKey || e.altKey)) {
+          edit(e);
         }
       })
       .on('click', '.icon-remove', rm);
