@@ -249,7 +249,7 @@
       });
     });
     $('.button-import').on('click', () => {
-      bootbox.prompt('Import with title:', title => {
+      const $dlg = bootbox.prompt('Import with title:', title => {
         if (!title || title.trim() == '') return;
         $.ajax({
           method: 'POST',
@@ -264,6 +264,15 @@
             location.href = `/book/${book_id}`;
           })
           .fail(checkErr);
+      });
+      $dlg.init(() => {
+        const $input = $dlg.find('input');
+        const $okButton = $dlg.find('.btn-primary');
+        $okButton.prop('disabled', true);
+        $input.on('change keyup input paste', () => {
+          const text = $input.val();
+          $okButton.prop('disabled', !text || text.trim() === '');
+        });
       });
     });
   });
