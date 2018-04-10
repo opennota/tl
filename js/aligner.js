@@ -94,6 +94,7 @@
     e.preventDefault();
     e.stopPropagation();
     const $td = $(e.currentTarget);
+    if ($td.find('textarea').length) return;
     const $tr = $td.parent();
     const side = $td.attr('class');
     $.ajax({
@@ -168,6 +169,7 @@
     e.preventDefault();
     e.stopPropagation();
     const $td = $(e.currentTarget);
+    if ($td.find('textarea').length) return;
     const $tr = $td.parent();
     const side = $td.attr('class');
     const $children = $td.children();
