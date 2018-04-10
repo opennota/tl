@@ -240,6 +240,17 @@
         }
       })
       .on('click', '.icon-remove', rm);
+    $('.button-swap').on('click', () => {
+      $.ajax({
+        method: 'POST',
+        url: '/aligner',
+        data: { op: 'swap', nonce: nonce++ },
+      })
+        .done(() => {
+          location.href = '/aligner';
+        })
+        .fail(checkErr);
+    });
     $('.button-clear').on('click', () => {
       bootbox.confirm({
         message: 'Are you sure?',
