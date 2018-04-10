@@ -42,7 +42,16 @@
         },
       });
     } else {
-      bootbox.alert('Error: ' + err);
+      const contentType = xhr.getResponseHeader('content-type');
+      if (
+        contentType &&
+        contentType.includes('text/plain') &&
+        xhr.responseText
+      ) {
+        bootbox.alert('Error: ' + xhr.responseText);
+      } else {
+        bootbox.alert('Error: ' + err);
+      }
     }
   }
 
