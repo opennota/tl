@@ -382,3 +382,37 @@ tr.commentary.shown { display: table-row; }
 .aligner .aligner-help { visibility: hidden; }
 .aligner:hover .aligner-help { visibility: visible; }
 .commentary blockquote { font-size: 14px; }
+a[data-id] { cursor: pointer; }
+a[data-id]:hover,
+a[data-id]:focus {
+  text-decoration: none;
+}
+.sticky {
+  position: fixed;
+  top: 0;
+  left: calc(50% - 200px);
+  right: calc(50% - 200px);
+  min-height: 3px;
+  z-index: 999;
+}
+.sticky .header { font-weight: bold; }
+.sticky .footer [data-id]:not(:first-child):before { content: ", "; }
+.sticky:not(:hover):not(.pinned) { background-color: darkgray; }
+.sticky:not(:hover):not(.pinned) > * { display: none; }
+.sticky .sticky-content {
+  background-color: beige;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  max-height: 600px;
+  overflow: auto;
+  padding: 10px;
+}
+.sticky-pin-button,
+.sticky-back-button {
+  position: absolute;
+  top: 5px;
+  color: darkgray;
+}
+.sticky-pin-button { right: 15px; }
+.sticky-back-button { right: 30px; }
+.sticky.pinned .sticky-pin-button { color: black; }

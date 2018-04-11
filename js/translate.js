@@ -451,6 +451,50 @@
       .focus();
   }
 
+  function showSticky() {
+    $('.sticky')
+      .addClass('pinned')
+      .show();
+  }
+
+  const stickyHistory = [];
+
+  function loadSynonyms(text) {
+    $.ajax({
+      url: '/syn',
+      method: 'GET',
+      data: { query: text.trim() },
+    })
+      .done(data => {
+        const $header = $('<div class="header">');
+        const $body = $('<div class="content">');
+        const $footer = $('<div class="footer">');
+        $header.text(data.value);
+        $('.sticky-back-button').toggle(!!stickyHistory.length);
+        stickyHistory.push(data.value);
+        $body.html(data.entries.join(''));
+        if (data.see_also.length) {
+          $footer.text('See also: ');
+          data.see_also.forEach(v => {
+            const $el = $(`<a data-id="${v.id}">`).text(v.value);
+            $footer.append($el);
+          });
+        }
+        $('.sticky-content')
+          .html('')
+          .append($header, $body, $footer);
+        showSticky();
+      })
+      .fail((xhr, status, err) => {
+        if (xhr.status == 404) {
+          $('.sticky-content').text('Not found.');
+          showSticky();
+        } else {
+          bootbox.alert('Error: ' + err);
+        }
+      });
+  }
+
   function toggleOrigToolbox(e) {
     $('.translator').toggleClass('show-orig-toolbox');
     Cookies.set(
@@ -459,6 +503,7 @@
     );
     $.scrollTo($(e.target).closest('tr'));
   }
+
   $(document).ready(() => {
     $('.translator')
       .on('click', '.x-translate, .x-edit', edit)
@@ -471,6 +516,20 @@
       .on('click', '.x-remove-orig', removeOrig)
       .on('click', '.x-edit-orig', editOrig)
       .on('click', '.x-add-orig', addOrig);
+    $('.sticky-pin-button').on('click', e => {
+      $(e.target)
+        .closest('.sticky')
+        .toggleClass('pinned');
+    });
+    $('.sticky-back-button').on('click', () => {
+      if (stickyHistory.length < 2) return;
+      stickyHistory.pop();
+      loadSynonyms(stickyHistory.pop());
+    });
+    $('.sticky-content').on('click', '[data-id]', e => {
+      if (e.ctrlKey || e.shiftKey || e.altKey) return;
+      loadSynonyms($(e.target).text());
+    });
     $(document).on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         if ($previous) {
@@ -479,6 +538,27 @@
           $('td.t > div[id^=v]:first-child .x-edit')
             .first()
             .click();
+        }
+      } else if (
+        e.altKey &&
+        !(e.shiftKey || e.ctrlKey) &&
+        e.which == 83 /* Alt-S */
+      ) {
+        const sel = document.getSelection();
+        if (!sel || !sel.rangeCount) return;
+        let text = sel.toString();
+
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=85686
+        if (text === '' && e.target.nodeName == 'TEXTAREA') {
+          text = e.target.value.substring(
+            e.target.selectionStart,
+            e.target.selectionEnd
+          );
+        }
+
+        text = text.trim();
+        if (text !== '') {
+          loadSynonyms(text);
         }
       }
     });

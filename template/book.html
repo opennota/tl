@@ -122,6 +122,12 @@
     </script>
   </head>
   <body>
+    <div class="sticky" style="display: none;">
+      <i class="fa fa-thumb-tack sticky-pin-button"></i>
+      <i class="fa fa-arrow-circle-left sticky-back-button" style="display: none;"></i>
+      <div class="sticky-content"></div>
+    </div>
+
     <div id="container" class="container{{ if .Fluid }}-fluid{{ end }}">
       <h1>{{ .Title }}</h1>
 
