@@ -40,6 +40,8 @@ var (
 	store  = sessions.NewCookieStore(secret)
 
 	rNewline = regexp.MustCompile(`[\r\n]+`)
+
+	c http.Client
 )
 
 func logError(err error) {

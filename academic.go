@@ -29,11 +29,7 @@ const (
 	synSeekBaseURL  = "https://dic.academic.ru/seek4term.php?json=true&limit=20&did=dic_synonims&q="
 )
 
-var (
-	rSynonymsURL = regexp.MustCompile(`^https?://dic\.academic\.ru/dic\.nsf/dic_synonims/(\d+)/`)
-
-	c http.Client
-)
+var rSynonymsURL = regexp.MustCompile(`^https?://dic\.academic\.ru/dic\.nsf/dic_synonims/(\d+)/`)
 
 func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 	resp, err := c.Get(synSeekBaseURL + url.QueryEscape(r.FormValue("query")))
