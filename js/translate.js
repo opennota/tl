@@ -609,6 +609,8 @@
             loadDefinitions(text);
           }
         } else if (e.which == 81 /* Alt-Q */) {
+          e.preventDefault();
+          e.stopPropagation();
           const $sticky = $('.sticky');
           if ($sticky.hasClass('pinned')) {
             $sticky.removeClass('pinned').attr('style', 'display: none;');
