@@ -451,13 +451,21 @@
       .focus();
   }
 
-  function showSticky() {
+  const stickyHistory = [];
+  let stickyCurrent;
+
+  function navigated(to) {
+    if (stickyCurrent) {
+      stickyHistory.push(stickyCurrent);
+      stickyCurrent = null;
+    }
+    stickyCurrent = to;
     $('.sticky')
       .addClass('pinned')
       .show();
+    $('.sticky-back-button').toggleClass('active', !!stickyHistory.length);
+    $('.sticky-content').scrollTop(0);
   }
-
-  const stickyHistory = [];
 
   function loadSynonyms(text) {
     $.ajax({
@@ -466,12 +474,11 @@
       data: { query: text.trim() },
     })
       .done(data => {
+        navigated({ type: 'syn', value: data.value });
         const $header = $('<div class="header">');
-        const $body = $('<div class="content">');
+        const $body = $('<div class="body">');
         const $footer = $('<div class="footer">');
         $header.text(data.value);
-        $('.sticky-back-button').toggle(!!stickyHistory.length);
-        stickyHistory.push(data.value);
         $body.html(data.entries.join(''));
         if (data.see_also.length) {
           $footer.text('See also: ');
@@ -483,12 +490,35 @@
         $('.sticky-content')
           .html('')
           .append($header, $body, $footer);
-        showSticky();
       })
       .fail((xhr, status, err) => {
         if (xhr.status == 404) {
+          navigated();
           $('.sticky-content').text('Not found.');
-          showSticky();
+        } else {
+          bootbox.alert('Error: ' + err);
+        }
+      });
+  }
+
+  function loadDefinitions(text) {
+    $.ajax({
+      url: '/def',
+      method: 'GET',
+      data: { query: text.trim() },
+    })
+      .done(data => {
+        navigated({ type: 'def', value: text });
+        const $body = $('<div class="oxford-dictionaries">');
+        $body.html(data.html);
+        $('.sticky-content')
+          .html('')
+          .append($body);
+      })
+      .fail((xhr, status, err) => {
+        if (xhr.status == 404) {
+          navigated();
+          $('.sticky-content').text('Not found.');
         } else {
           bootbox.alert('Error: ' + err);
         }
@@ -502,6 +532,19 @@
       $('.translator').hasClass('show-orig-toolbox') ? 1 : 0
     );
     $.scrollTo($(e.target).closest('tr'));
+  }
+
+  function getSelection(el) {
+    const sel = document.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    const text = sel.toString();
+
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=85686
+    if (text === '' && el.nodeName == 'TEXTAREA') {
+      return el.value.substring(el.selectionStart, el.selectionEnd);
+    }
+
+    return text;
   }
 
   $(document).ready(() => {
@@ -522,14 +565,25 @@
         .toggleClass('pinned');
     });
     $('.sticky-back-button').on('click', () => {
-      if (stickyHistory.length < 2) return;
-      stickyHistory.pop();
-      loadSynonyms(stickyHistory.pop());
+      if (!stickyHistory.length) return;
+      stickyCurrent = null;
+      const item = stickyHistory.pop();
+      if (item.type == 'syn') {
+        loadSynonyms(item.value);
+      } else if (item.type == 'def') {
+        loadDefinitions(item.value);
+      }
     });
-    $('.sticky-content').on('click', '[data-id]', e => {
-      if (e.ctrlKey || e.shiftKey || e.altKey) return;
-      loadSynonyms($(e.target).text());
-    });
+    $('.sticky-content')
+      .on('click', '[data-id]', e => {
+        if (e.ctrlKey || e.shiftKey || e.altKey) return;
+        loadSynonyms($(e.target).text());
+      })
+      .on('click', '.moreInfo button', e => {
+        $(e.target)
+          .parent()
+          .toggleClass('active');
+      });
     $(document).on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         if ($previous) {
@@ -539,26 +593,21 @@
             .first()
             .click();
         }
-      } else if (
-        e.altKey &&
-        !(e.shiftKey || e.ctrlKey) &&
-        e.which == 83 /* Alt-S */
-      ) {
-        const sel = document.getSelection();
-        if (!sel || !sel.rangeCount) return;
-        let text = sel.toString();
-
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=85686
-        if (text === '' && e.target.nodeName == 'TEXTAREA') {
-          text = e.target.value.substring(
-            e.target.selectionStart,
-            e.target.selectionEnd
-          );
-        }
-
-        text = text.trim();
-        if (text !== '') {
-          loadSynonyms(text);
+      } else if (e.altKey && !(e.shiftKey || e.ctrlKey)) {
+        if (e.which == 83 /* Alt-S */) {
+          e.preventDefault();
+          e.stopPropagation();
+          const text = getSelection(e.target).trim();
+          if (text !== '') {
+            loadSynonyms(text);
+          }
+        } else if (e.which == 68 /* Alt-D */) {
+          e.preventDefault();
+          e.stopPropagation();
+          const text = getSelection(e.target).trim();
+          if (text !== '') {
+            loadDefinitions(text);
+          }
         }
       }
     });

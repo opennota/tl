@@ -416,3 +416,96 @@ a[data-id]:focus {
 .sticky-pin-button { right: 15px; }
 .sticky-back-button { right: 30px; }
 .sticky.pinned .sticky-pin-button { color: black; }
+.oxford-dictionaries .iteration,
+.oxford-dictionaries .subsenseIteration {
+  font-weight: bold;
+}
+.oxford-dictionaries .iteration { margin-right: 12px; }
+.oxford-dictionaries .subsenseIteration {
+  position: relative;
+  right: 15px;
+}
+.oxford-dictionaries ul,
+.oxford-dictionaries ol {
+  list-style: none;
+}
+.oxford-dictionaries .form-groups:before { content: "("; }
+.oxford-dictionaries .form-groups:after { content: ")"; }
+.oxford-dictionaries .examples .exg,
+.oxford-dictionaries .synonyms .exg {
+  display: none;
+}
+.oxford-dictionaries .moreInfo.active + .exg { display: block; }
+.oxford-dictionaries .moreInfo.active button {
+  background-color: #666666;
+  border-color: #666666;
+  color: white;
+}
+.oxford-dictionaries .exg { margin: 4px 0 7px; }
+.oxford-dictionaries .synonyms,
+.oxford-dictionaries .examples,
+.oxford-dictionaries .synonyms .moreInfo,
+.oxford-dictionaries .examples .moreInfo {
+  display: inline;
+  margin-right: 5px;
+}
+.oxford-dictionaries .gramb .ps,
+.oxford-dictionaries .pronSection .ps {
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #f15a24;
+}
+.oxford-dictionaries .subSenses { margin-top: 7px; }
+.oxford-dictionaries .sense-regions,
+.oxford-dictionaries .sense-registers {
+  font-style: italic;
+  color: #27a058;
+  font-style: italic;
+}
+.oxford-dictionaries .transitivity {
+  font-weight: bold;
+  color: #304e70;
+  text-transform: uppercase;
+}
+.oxford-dictionaries .pron h2 {
+  display: inline;
+  margin-right: 10px;
+  font-size: medium;
+}
+.oxford-dictionaries .moreInfo button {
+  border: 2px solid #dbdee2;
+  color: #666666;
+  padding: 2px 8px 3px 8px;
+  border-radius: 13px;
+}
+.oxford-dictionaries .moreInfo:not(.active) button:hover {
+  background-color: #dbdee2;
+  border-color: #dbdee2;
+}
+.oxford-dictionaries .moreInfo + .exg .ex {
+  padding: 0 0 9px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #ddd;
+}
+.oxford-dictionaries .grammatical_note {
+  color: #27a058;
+  font-style: italic;
+}
+.oxford-dictionaries .grammatical_note:before { content: "["; }
+.oxford-dictionaries .grammatical_note:after { content: "]"; }
+.oxford-dictionaries > h2:first-child { margin-top: 0; }
+.sticky .sticky-back-button { display: none; }
+.sticky:hover .sticky-back-button.active,
+.sticky.pinned .sticky-back-button.active {
+  display: inline;
+}
+.oxford-dictionaries .gramb .ps .pos-inflections {
+  color: #2a2a2a;
+  font-weight: normal;
+  text-transform: lowercase;
+  letter-spacing: initial;
+}
+.oxford-dictionaries .gramb .ps .pos-inflections:before { content: " ("; }
+.oxford-dictionaries .gramb .ps .pos-inflections:after { content: ")"; }
+.oxford-dictionaries .phoneticSpelling { margin: 0 5px; }
+.oxford-dictionaries .pronSection span { margin-left: 7px; }

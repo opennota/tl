@@ -55,6 +55,7 @@ func main() {
 	r.HandleFunc("/remove", app.RemoveBook).Methods("GET")
 	r.HandleFunc("/aligner", app.Aligner).Methods("GET", "POST")
 	r.HandleFunc("/syn", app.Synonyms).Methods("GET")
+	r.HandleFunc("/def", app.Definitions).Methods("GET")
 	r.HandleFunc("/backup", app.Backup).Methods("GET")
 	r.HandleFunc(`/book/{book_id:[0-9]+}`, app.Book).
 		Methods("GET", "POST", "DELETE")
