@@ -608,6 +608,14 @@
           if (text !== '') {
             loadDefinitions(text);
           }
+        } else if (e.which == 81 /* Alt-Q */) {
+          const $sticky = $('.sticky');
+          if ($sticky.hasClass('pinned')) {
+            $sticky.removeClass('pinned').attr('style', 'display: none;');
+            setTimeout(() => $sticky.removeAttr('style'), 100);
+          } else if ($sticky.find('.sticky-content > *').length) {
+            $sticky.addClass('pinned');
+          }
         }
       }
     });
