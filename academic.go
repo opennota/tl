@@ -76,7 +76,7 @@ func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	policy := bluemonday.NewPolicy()
-	policy.AllowElements("div", "u", "span", "em", "strong")
+	policy.AllowElements("div", "em", "span", "strong", "u")
 	policy.AllowAttrs("data-id").OnElements("a")
 	policy.AllowAttrs("class").OnElements("div", "span")
 
