@@ -64,6 +64,11 @@ func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
+		return
+	}
+
 	d, err := goquery.NewDocumentFromResponse(resp)
 	if err != nil {
 		internalError(w, err)
