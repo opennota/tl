@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/microcosm-cc/bluemonday"
@@ -105,12 +106,12 @@ func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(struct {
 		ID      int          `json:"id"`
 		Value   string       `json:"value"`
-		Entries []string     `json:"entries"`
+		HTML    string       `json:"html"`
 		SeeAlso []seekResult `json:"see_also"`
 	}{
 		results[0].ID,
 		results[0].Value,
-		entries,
+		strings.Join(entries, ""),
 		results[1:],
 	})
 }

@@ -479,7 +479,7 @@
         const $body = $('<div class="body">');
         const $footer = $('<div class="footer">');
         $header.text(data.value);
-        $body.html(data.entries.join(''));
+        $body.html(data.html);
         if (data.see_also.length) {
           $footer.text('See also: ');
           data.see_also.forEach(v => {
