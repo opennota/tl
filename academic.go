@@ -70,7 +70,7 @@ func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := goquery.NewDocumentFromResponse(resp)
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		internalError(w, err)
 		return

@@ -43,7 +43,7 @@ func (a *App) Definitions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := goquery.NewDocumentFromResponse(resp)
+	d, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		internalError(w, err)
 		return
