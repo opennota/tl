@@ -329,12 +329,14 @@ a.similar:focus {
 }
 .sticky .header { font-weight: bold; }
 .sticky .footer [data-id]:not(:first-child):before { content: ", "; }
-.sticky:not(:hover):not(.pinned) { background-color: darkgray; }
+.sticky:not(:hover):not(.pinned) { background-color: #a5a5a5; }
 .sticky:not(:hover):not(.pinned) > * { display: none; }
 .sticky .sticky-content {
   background-color: beige;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+}
+.sticky .sticky-content > div {
   max-height: 600px;
   overflow: auto;
   padding: 10px;
@@ -342,7 +344,7 @@ a.similar:focus {
 .sticky-pin-button,
 .sticky-back-button {
   position: absolute;
-  top: 5px;
+  top: 13px;
   color: darkgray;
 }
 .sticky-pin-button { right: 15px; }
@@ -421,6 +423,7 @@ a.similar:focus {
   padding: 2px 8px 3px 8px;
   border-radius: 13px;
 }
+.oxford-dictionaries .moreInfo button:focus { outline: none; }
 .oxford-dictionaries .moreInfo:not(.active) button:hover {
   background-color: #dbdee2;
   border-color: #dbdee2;
@@ -455,3 +458,15 @@ a.similar:focus {
 }
 .oxford-dictionaries .gramb ul.semb > li { margin-bottom: 12px; }
 .oxford-dictionaries a.similar:not(:first-child):before { content: ", "; }
+.nav.nav-xs > li > a {
+  font-size: 12px;
+  padding: 1px 5px;
+}
+.sticky .nav {
+  padding: 10px;
+  background-color: #e9f5dc;
+  border-bottom: 1px solid #333;
+}
+.sticky .nav > li > a { cursor: pointer; }
+.sticky-page { display: none; }
+.sticky-page.active { display: block; }

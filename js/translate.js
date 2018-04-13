@@ -451,30 +451,46 @@
       .focus();
   }
 
-  const stickyHistory = [];
-  let stickyCurrent;
+  const stickyHistory = {
+    0: [],
+    1: [],
+  };
+  let stickyCurrent = [];
 
-  function navigated(to) {
-    if (stickyCurrent) {
-      stickyHistory.push(stickyCurrent);
-      stickyCurrent = null;
+  function navigated(index, to) {
+    if (stickyCurrent[index]) {
+      stickyHistory[index].push(stickyCurrent[index]);
     }
-    stickyCurrent = to;
+    stickyCurrent[index] = to;
     $('.sticky')
       .addClass('pinned')
       .show();
-    $('.sticky-back-button').toggleClass('active', !!stickyHistory.length);
-    $('.sticky-content').scrollTop(0);
+    switchToTab(index);
+    $('.sticky-content > div').scrollTop(0);
+  }
+
+  function switchToTab(index) {
+    $('.sticky-content > .nav > li').each((idx, el) => {
+      $(el).toggleClass('active', idx === index);
+    });
+    $('.sticky-content .sticky-page').each((idx, el) => {
+      $(el).toggleClass('active', idx === index);
+    });
+    $('.sticky-back-button').toggleClass(
+      'active',
+      !!stickyHistory[index].length
+    );
   }
 
   function loadSynonyms(text) {
+    const $page = $('.sticky-page.academic-synonyms');
     $.ajax({
       url: '/syn',
       method: 'GET',
       data: { query: text.trim() },
     })
       .done(data => {
-        navigated({ type: 'syn', value: data.value });
+        navigated(1, data.value);
         const $header = $('<div class="header">');
         const $body = $('<div class="body">');
         const $footer = $('<div class="footer">');
@@ -487,14 +503,12 @@
             $footer.append($el);
           });
         }
-        $('.sticky-content')
-          .html('')
-          .append($header, $body, $footer);
+        $page.html('').append($header, $body, $footer);
       })
       .fail((xhr, status, err) => {
         if (xhr.status == 404) {
-          navigated();
-          $('.sticky-content').text('Not found.');
+          navigated(1);
+          $page.text('Not found.');
         } else {
           bootbox.alert('Error: ' + err);
         }
@@ -502,23 +516,20 @@
   }
 
   function loadDefinitions(text) {
+    const $page = $('.sticky-page.oxford-dictionaries');
     $.ajax({
       url: '/def',
       method: 'GET',
       data: { query: text.trim() },
     })
       .done(data => {
-        navigated({ type: 'def', value: text });
-        const $body = $('<div class="oxford-dictionaries">');
-        $body.html(data.html);
-        $('.sticky-content')
-          .html('')
-          .append($body);
+        navigated(0, text);
+        $page.html(data.html);
       })
       .fail((xhr, status, err) => {
         if (xhr.status == 404) {
-          navigated();
-          $('.sticky-content').text('Not found.');
+          navigated(0);
+          $page.text('Not found.');
         } else {
           bootbox.alert('Error: ' + err);
         }
@@ -565,13 +576,13 @@
         .toggleClass('pinned');
     });
     $('.sticky-back-button').on('click', () => {
-      if (!stickyHistory.length) return;
-      stickyCurrent = null;
-      const item = stickyHistory.pop();
-      if (item.type == 'syn') {
-        loadSynonyms(item.value);
-      } else if (item.type == 'def') {
-        loadDefinitions(item.value);
+      const index = $('.sticky-content > .nav > li.active').index();
+      stickyCurrent[index] = null;
+      const value = stickyHistory[index].pop();
+      if (index === 0) {
+        loadDefinitions(value);
+      } else if (index === 1) {
+        loadSynonyms(value);
       }
     });
     $('.sticky-content')
@@ -588,6 +599,9 @@
           .parent()
           .toggleClass('active');
       });
+    $('.sticky-content > .nav > li').on('click', e =>
+      switchToTab($(e.currentTarget).index())
+    );
     $(document).on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         if ($previous) {
@@ -619,8 +633,8 @@
           if ($sticky.hasClass('pinned')) {
             $sticky.removeClass('pinned').attr('style', 'display: none;');
             setTimeout(() => $sticky.removeAttr('style'), 100);
-          } else if ($sticky.find('.sticky-content > *').length) {
-            $sticky.addClass('pinned');
+          } else {
+            $sticky.addClass('pinned').removeAttr('style');
           }
         }
       }
