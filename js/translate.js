@@ -558,6 +558,16 @@
     return text;
   }
 
+  function once(fn) {
+    let called;
+    return () => {
+      if (!called) {
+        fn();
+        called = true;
+      }
+    };
+  }
+
   $(document).ready(() => {
     $('.translator')
       .on('click', '.x-translate, .x-edit', edit)
@@ -570,6 +580,7 @@
       .on('click', '.x-remove-orig', removeOrig)
       .on('click', '.x-edit-orig', editOrig)
       .on('click', '.x-add-orig', addOrig);
+    const $sticky = $('.sticky');
     $('.sticky-pin-button').on('click', e => {
       $(e.target)
         .closest('.sticky')
@@ -599,9 +610,34 @@
           .parent()
           .toggleClass('active');
       });
-    $('.sticky-content > .nav > li').on('click', e =>
-      switchToTab($(e.currentTarget).index())
-    );
+    $('.sticky-content > .nav > li')
+      .on('click', e => switchToTab($(e.currentTarget).index()))
+      .on('mousedown', e => e.stopPropagation());
+    $('.sticky-content > .nav').on('mousedown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      let x = e.clientX;
+      let y = e.clientY;
+      const $document = $(document);
+      const addClassesOnce = once(() =>
+        $sticky.addClass('pinned').addClass('floating')
+      );
+      const drag = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const x2 = x - e.clientX;
+        const y2 = y - e.clientY;
+        x = e.clientX;
+        y = e.clientY;
+        addClassesOnce();
+        $sticky
+          .css('top', $sticky.get(0).offsetTop - y2 + 'px')
+          .css('left', $sticky.get(0).offsetLeft - x2 + 'px');
+      };
+      const endDrag = () =>
+        $document.off('mousemove', drag).off('mouseup', endDrag);
+      $document.on('mousemove', drag).on('mouseup', endDrag);
+    });
     $(document).on('keydown', e => {
       if (e.ctrlKey && e.which == 13) {
         if ($previous) {
@@ -615,7 +651,9 @@
         if (e.which == 83 /* Alt-S */) {
           e.preventDefault();
           e.stopPropagation();
-          const text = getSelection(e.target).trim();
+          let text = getSelection(e.target);
+          if (!text) return;
+          text = text.trim();
           if (text === '') return;
           if (/[а-яё]/i.test(text)) {
             loadSynonyms(text);
@@ -625,12 +663,11 @@
         } else if (e.which == 81 /* Alt-Q */) {
           e.preventDefault();
           e.stopPropagation();
-          const $sticky = $('.sticky');
           if ($sticky.hasClass('pinned')) {
-            $sticky.removeClass('pinned').attr('style', 'display: none;');
-            setTimeout(() => $sticky.removeAttr('style'), 100);
+            $sticky.removeClass('pinned').css('display', 'none');
+            setTimeout(() => $sticky.css('display', ''), 100);
           } else {
-            $sticky.addClass('pinned').removeAttr('style');
+            $sticky.addClass('pinned').css('display', '');
           }
         }
       }

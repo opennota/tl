@@ -323,7 +323,7 @@ a.similar:focus {
   position: fixed;
   top: 0;
   left: calc(50% - 200px);
-  right: calc(50% - 200px);
+  width: 400px;
   min-height: 3px;
   z-index: 999;
 }
