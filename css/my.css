@@ -451,7 +451,10 @@ a.similar:focus {
 .oxford-dictionaries .gramb .ps .pos-inflections .inflection-text { font-weight: bold; }
 .oxford-dictionaries .phoneticSpelling { margin: 0 5px; }
 .oxford-dictionaries .pronSection span { margin-left: 7px; }
-.oxford-dictionaries .gramb .ps .pos { font-weight: bold; }
+.oxford-dictionaries .gramb .ps .pos,
+.oxford-dictionaries .pronSection .ps {
+  font-weight: bold;
+}
 .oxford-dictionaries .gramb .semb p.note {
   padding-left: 10px;
   border-left: 3px solid #ccc;
