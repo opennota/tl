@@ -33,7 +33,7 @@ const (
 var rSynonymsURL = regexp.MustCompile(`^https?://dic\.academic\.ru/dic\.nsf/dic_synonims/(\d+)/`)
 
 func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
-	resp, err := c.Get(synSeekBaseURL + url.PathEscape(r.FormValue("query")))
+	resp, err := httpClient.Get(synSeekBaseURL + url.PathEscape(r.FormValue("query")))
 	if err != nil {
 		internalError(w, err)
 		return
@@ -58,7 +58,7 @@ func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err = c.Get(synonymsBaseURL + fmt.Sprint(results[0].ID))
+	resp, err = httpClient.Get(synonymsBaseURL + fmt.Sprint(results[0].ID))
 	if err != nil {
 		internalError(w, err)
 		return

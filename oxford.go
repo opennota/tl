@@ -27,7 +27,7 @@ import (
 const oxfordBaseURL = "https://en.oxforddictionaries.com/definition/"
 
 func (a *App) Definitions(w http.ResponseWriter, r *http.Request) {
-	resp, err := c.Get(oxfordBaseURL + url.PathEscape(r.FormValue("query")))
+	resp, err := httpClient.Get(oxfordBaseURL + url.PathEscape(r.FormValue("query")))
 	if err != nil {
 		internalError(w, err)
 		return

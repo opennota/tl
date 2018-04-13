@@ -41,7 +41,7 @@ var (
 
 	rNewline = regexp.MustCompile(`[\r\n]+`)
 
-	c http.Client
+	httpClient http.Client
 )
 
 func logError(err error) {
