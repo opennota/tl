@@ -468,7 +468,7 @@ a.similar:focus {
 .sticky .nav {
   padding: 10px;
   background-color: #e9f5dc;
-  border-bottom: 1px solid #333;
+  border-bottom: 3px double #333;
 }
 .sticky .nav > li > a { cursor: pointer; }
 .sticky-page { display: none; }
