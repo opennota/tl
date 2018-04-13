@@ -616,14 +616,10 @@
           e.preventDefault();
           e.stopPropagation();
           const text = getSelection(e.target).trim();
-          if (text !== '') {
+          if (text === '') return;
+          if (/[а-яё]/i.test(text)) {
             loadSynonyms(text);
-          }
-        } else if (e.which == 68 /* Alt-D */) {
-          e.preventDefault();
-          e.stopPropagation();
-          const text = getSelection(e.target).trim();
-          if (text !== '') {
+          } else {
             loadDefinitions(text);
           }
         } else if (e.which == 81 /* Alt-Q */) {
