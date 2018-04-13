@@ -16,6 +16,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
 	"net/url"
 	"strings"
@@ -35,11 +36,7 @@ func (a *App) Definitions(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		if resp.StatusCode == 404 {
-			http.NotFound(w, r)
-		} else {
-			internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
-		}
+		internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
 		return
 	}
 
@@ -49,19 +46,25 @@ func (a *App) Definitions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy := bluemonday.NewPolicy()
-	policy.AllowElements("button", "div", "em", "h2", "h3", "li", "ol", "p", "section", "span", "strong", "sup", "ul")
-	policy.AllowAttrs("class").Globally()
-
 	var result []string
-	d.Find(`section.gramb, section.etym, .hwg`).Each(func(_ int, sel *goquery.Selection) {
-		sel.Find(".rsbtn_play, .speaker, .ipaLink, .exs + a").
-			Each(func(_ int, sel *goquery.Selection) {
-				sel.Remove()
-			})
-		html, _ := goquery.OuterHtml(sel)
-		result = append(result, policy.Sanitize(html))
-	})
+	if resp.Request.URL.Path == "/search" {
+		d.Find(".similar-results .search-results a").Each(func(_ int, sel *goquery.Selection) {
+			result = append(result, `<a class="similar">`+html.EscapeString(sel.Text())+"</a>")
+		})
+	} else {
+		policy := bluemonday.NewPolicy()
+		policy.AllowElements("button", "div", "em", "h2", "h3", "li", "ol", "p", "section", "span", "strong", "sup", "ul")
+		policy.AllowAttrs("class").Globally()
+
+		d.Find(`section.gramb, section.etym, .hwg`).Each(func(_ int, sel *goquery.Selection) {
+			sel.Find(".rsbtn_play, .speaker, .ipaLink, .exs + a").
+				Each(func(_ int, sel *goquery.Selection) {
+					sel.Remove()
+				})
+			html, _ := goquery.OuterHtml(sel)
+			result = append(result, policy.Sanitize(html))
+		})
+	}
 
 	if len(result) == 0 {
 		http.NotFound(w, r)

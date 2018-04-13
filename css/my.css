@@ -309,9 +309,14 @@ tr.commentary.shown { display: table-row; }
 .aligner .aligner-help { visibility: hidden; }
 .aligner:hover .aligner-help { visibility: visible; }
 .commentary blockquote { font-size: 14px; }
-a[data-id] { cursor: pointer; }
+a[data-id],
+a.similar {
+  cursor: pointer;
+}
 a[data-id]:hover,
-a[data-id]:focus {
+a[data-id]:focus,
+a.similar:hover,
+a.similar:focus {
   text-decoration: none;
 }
 .sticky {
@@ -449,3 +454,4 @@ a[data-id]:focus {
   border-left: 3px solid #ccc;
 }
 .oxford-dictionaries .gramb ul.semb > li { margin-bottom: 12px; }
+.oxford-dictionaries a.similar:not(:first-child):before { content: ", "; }

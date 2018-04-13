@@ -579,6 +579,10 @@
         if (e.ctrlKey || e.shiftKey || e.altKey) return;
         loadSynonyms($(e.target).text());
       })
+      .on('click', '.oxford-dictionaries a.similar', e => {
+        if (e.ctrlKey || e.shiftKey || e.altKey) return;
+        loadDefinitions($(e.target).text());
+      })
       .on('click', '.moreInfo button', e => {
         $(e.target)
           .parent()
