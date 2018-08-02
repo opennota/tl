@@ -537,12 +537,23 @@
   }
 
   function toggleOrigToolbox(e) {
+    let $target = $(e.target);
+    let oldOffset = $target.offset();
+    let oldScrollX = window.scrollX;
+    let oldScrollY = window.scrollY;
     $('.translator').toggleClass('show-orig-toolbox');
     Cookies.set(
       'show-orig-toolbox',
       $('.translator').hasClass('show-orig-toolbox') ? 1 : 0
     );
-    $.scrollTo($(e.target).closest('tr'));
+    setTimeout(
+      () =>
+        window.scrollTo(
+          oldScrollX,
+          oldScrollY - oldOffset.top + $target.offset().top
+        ),
+      1
+    );
   }
 
   function getSelection(el) {
