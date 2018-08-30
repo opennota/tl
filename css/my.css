@@ -473,3 +473,6 @@ a.similar:focus {
 .sticky .nav > li > a { cursor: pointer; }
 .sticky-page { display: none; }
 .sticky-page.active { display: block; }
+.tooltip-inner { background-color: #a5a5a5; }
+.tooltip-inner input { color: #333; }
+.tooltip.bottom .tooltip-arrow { border-bottom-color: #a5a5a5; }

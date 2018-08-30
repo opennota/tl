@@ -63,8 +63,9 @@ func (p Pagination) Render() template.HTML {
 			fmt.Fprintf(&buf, `<li><a href="%s?%s">1</a></li>`, path, qry)
 		}
 	}
+	const jumpBtn = `<li><a class="jump-to-page">...</a></li>`
 	if p.PageNumber > 3 {
-		buf.WriteString(`<li><span>...</span></li>`)
+		buf.WriteString(jumpBtn)
 	}
 	if p.PageNumber > 1 {
 		fmt.Fprintf(&buf, `<li><a rel="prev" href="%s?%s">%d</a></li>`, path, q.Page(p.PageNumber-1), p.PageNumber-1)
@@ -74,7 +75,7 @@ func (p Pagination) Render() template.HTML {
 		fmt.Fprintf(&buf, `<li><a rel="next" href="%s?%s">%d</a></li>`, path, q.Page(p.PageNumber+1), p.PageNumber+1)
 	}
 	if p.PageNumber+2 < tp {
-		buf.WriteString(`<li><span>...</span></li>`)
+		buf.WriteString(jumpBtn)
 	}
 	if p.PageNumber+1 < tp {
 		rel := `rel="next" `
