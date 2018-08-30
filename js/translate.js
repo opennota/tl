@@ -591,21 +591,18 @@
       .on('click', '.x-remove-orig', removeOrig)
       .on('click', '.x-edit-orig', editOrig)
       .on('click', '.x-add-orig', addOrig);
-    $('.pagination .jump-to-page').on('click', e => {
-      $(e.target)
-        .tooltip({
-          placement: 'bottom',
-          trigger: 'click',
-          html: true,
-          title: `<form action="/book/${book_id}"><input type="text" size="3" name="page"></input></form>`,
-        })
-        .on('shown.bs.tooltip', () => {
-          $('#' + $(e.target).attr('aria-describedby'))
-            .find('input')
-            .focus();
-        })
-        .tooltip('show');
-    });
+    $('.pagination .jump-to-page')
+      .tooltip({
+        placement: 'bottom',
+        trigger: 'click',
+        html: true,
+        title: `<form action="/book/${book_id}"><input type="text" size="3" name="page"></input></form>`,
+      })
+      .on('shown.bs.tooltip', e => {
+        $('#' + $(e.target).attr('aria-describedby'))
+          .find('input')
+          .focus();
+      });
     const $sticky = $('.sticky');
     $('.sticky-pin-button').on('click', e => {
       $(e.target)
