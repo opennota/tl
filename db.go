@@ -202,10 +202,12 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 			return ErrNotFound
 		}
 
+		if from >= len(book.FragmentsIDs) && from > 0 {
+			return ErrInvalidOffset
+		}
+
 		if size == -1 {
 			size = len(book.FragmentsIDs)
-		} else if from >= len(book.FragmentsIDs) && from > 0 {
-			return ErrInvalidOffset
 		}
 
 		var m *substring.Matcher
