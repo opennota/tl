@@ -31,7 +31,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("not found")
+	ErrNotFound      = errors.New("not found")
+	ErrInvalidOffset = errors.New("invalid offset")
 
 	rWord   = regexp.MustCompile(`\w+`)
 	rLetter = regexp.MustCompile(`\pL`)
@@ -202,6 +203,8 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 
 		if size == -1 {
 			size = len(book.FragmentsIDs)
+		} else if from >= len(book.FragmentsIDs) && from > 0 {
+			return ErrInvalidOffset
 		}
 
 		var m *substring.Matcher
@@ -361,6 +364,9 @@ func (db *DB) BookWithTranslations(bid uint64, from, size int, filter filterKind
 
 		return nil
 	}); err != nil {
+		if err == ErrInvalidOffset {
+			return book, err
+		}
 		return Book{}, err
 	}
 	return book, nil

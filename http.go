@@ -83,6 +83,28 @@ func (a *App) Index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func divRoundUp(a, b int) int {
+	c := a / b
+	if a%b != 0 {
+		c++
+	}
+	return c
+}
+
+func redirectToPageNumber(w http.ResponseWriter, r *http.Request, page int) {
+	q := r.URL.Query()
+	if page > 1 {
+		q["page"] = []string{strconv.Itoa(page)}
+	} else {
+		delete(q, "page")
+	}
+	if len(q) > 0 {
+		http.Redirect(w, r, r.URL.Path+"?"+q.Encode(), http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
+	}
+}
+
 func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bid, err := u64(vars["book_id"])
@@ -97,7 +119,7 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 		if p := r.FormValue("page"); p != "" {
 			page, err = strconv.Atoi(p)
 			if err != nil || page <= 0 {
-				http.Error(w, "Invalid page number", http.StatusBadRequest)
+				redirectToPageNumber(w, r, 1)
 				return
 			}
 		}
@@ -139,6 +161,10 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if err == ErrNotFound {
 				http.NotFound(w, r)
+				return
+			}
+			if err == ErrInvalidOffset {
+				redirectToPageNumber(w, r, divRoundUp(len(book.FragmentsIDs), size))
 				return
 			}
 			internalError(w, err)
