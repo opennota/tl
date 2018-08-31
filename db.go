@@ -50,6 +50,7 @@ type Book struct {
 	FragmentsTranslated int       `json:"fragments_translated"`
 	FragmentsIDs        []uint64  `json:"fragments_ids"`
 	LastActivity        time.Time `json:"last_activity"`
+	LastVisitedPage     int       `json:"last_visited_page"`
 
 	Fragments []Fragment `json:"-"`
 }
@@ -895,6 +896,23 @@ func (db *DB) UpdateScratchpad(bid uint64, text string) error {
 		return marshal(b, bid, sp)
 	})
 	return err
+}
+
+func (db *DB) UpdateLastVisitedPage(bid uint64, page int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("index"))
+		var book Book
+		if found, err := unmarshal(b, bid, &book); err != nil {
+			return err
+		} else if !found {
+			return ErrNotFound
+		}
+		if book.LastVisitedPage == page {
+			return nil
+		}
+		book.LastVisitedPage = page
+		return marshal(b, bid, &book)
+	})
 }
 
 func (db *DB) ExportBookToJSON(bid uint64) ([]byte, error) {

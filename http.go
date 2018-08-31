@@ -157,6 +157,11 @@ func (a *App) Book(w http.ResponseWriter, r *http.Request) {
 			book, err = a.db.BookWithTranslations(bid, off, size, fOriginalLength, r.FormValue("comp"), r.FormValue("n"), r.FormValue("unit"))
 		default:
 			book, err = a.db.BookWithTranslations(bid, off, size, fNone)
+			if err == nil && book.LastVisitedPage != page {
+				if err := a.db.UpdateLastVisitedPage(bid, page); err != nil {
+					logError(err)
+				}
+			}
 		}
 		if err != nil {
 			if err == ErrNotFound {

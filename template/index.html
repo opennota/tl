@@ -81,7 +81,11 @@
                   {{ end }}
                 </td>
                 <td>
-                  <a class="title" href="/book/{{ .ID }}">{{ .Title }}</a>
+                  {{ if gt .LastVisitedPage 1 }}
+                    <a class="title" href="/book/{{ .ID }}?page={{ .LastVisitedPage }}">{{ .Title }}</a>
+                  {{ else }}
+                    <a class="title" href="/book/{{ .ID }}">{{ .Title }}</a>
+                  {{ end }}
                   <i class="edit-title fa fa-pencil"></i>
                 </td>
                 <td>
