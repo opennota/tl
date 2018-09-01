@@ -482,12 +482,14 @@
     );
   }
 
-  function loadSynonyms(text) {
+  function loadSynonyms(text, exact) {
     const $page = $('.sticky-page.academic-synonyms');
+    const data = { query: text.trim() };
+    if (exact) data.exact = 1;
     $.ajax({
       url: '/syn',
       method: 'GET',
-      data: { query: text.trim() },
+      data,
     })
       .done(data => {
         navigated(1, data.value);
@@ -622,7 +624,7 @@
     $('.sticky-content')
       .on('click', '[data-id]', e => {
         if (e.ctrlKey || e.shiftKey || e.altKey) return;
-        loadSynonyms($(e.target).text());
+        loadSynonyms($(e.target).text(), $(e.target).attr('morph'));
       })
       .on('click', '.oxford-dictionaries a.similar', e => {
         if (e.ctrlKey || e.shiftKey || e.altKey) return;

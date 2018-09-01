@@ -19,7 +19,10 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
+
+	"github.com/opennota/morph"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/microcosm-cc/bluemonday"
@@ -30,20 +33,62 @@ const (
 	synSeekBaseURL  = "https://dic.academic.ru/seek4term.php?json=true&limit=20&did=dic_synonims&q="
 )
 
-var rSynonymsURL = regexp.MustCompile(`^https?://dic\.academic\.ru/dic\.nsf/dic_synonims/(\d+)/`)
+var (
+	rSynonymsURL = regexp.MustCompile(`^https?://dic\.academic\.ru/dic\.nsf/dic_synonims/(\d+)/`)
+
+	yoReplacer = strings.NewReplacer("ё", "е")
+
+	useMorph = morph.Init() == nil
+)
 
 func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
-	resp, err := httpClient.Get(synSeekBaseURL + url.PathEscape(r.FormValue("query")))
+	type seekResult struct {
+		ID    int    `json:"id"`
+		Value string `json:"value"`
+	}
+
+	query := strings.ToLower(r.FormValue("query"))
+	if useMorph && r.FormValue("exact") == "" {
+		_, norms, _ := morph.Parse(query)
+		if len(norms) > 0 {
+			norms = append(norms, yoReplacer.Replace(query))
+			sort.Strings(norms)
+			words := norms[:0]
+			for i, w := range norms {
+				w = yoReplacer.Replace(w)
+				if i == 0 || words[len(words)-1] != w {
+					words = append(words, w)
+				}
+			}
+
+			if len(words) == 1 {
+				query = yoReplacer.Replace(words[0])
+			} else {
+				w.Header().Add("Content-Type", "encoding/json")
+				pre, post := `<a data-id="" morph="1">`, `</a>`
+				json.NewEncoder(w).Encode(struct {
+					ID      int          `json:"id"`
+					Value   string       `json:"value"`
+					HTML    string       `json:"html"`
+					SeeAlso []seekResult `json:"see_also"`
+				}{
+					-1,
+					query,
+					`<div>Select one of: ` + pre + strings.Join(words, post+", "+pre) + post + "</div>",
+					[]seekResult{},
+				})
+				return
+			}
+		}
+	}
+
+	resp, err := httpClient.Get(synSeekBaseURL + url.PathEscape(query))
 	if err != nil {
 		internalError(w, err)
 		return
 	}
 	defer resp.Body.Close()
 
-	type seekResult struct {
-		ID    int    `json:"id"`
-		Value string `json:"value"`
-	}
 	var results []seekResult
 	if err := json.NewDecoder(resp.Body).Decode(&struct {
 		Results *[]seekResult
