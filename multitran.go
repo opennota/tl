@@ -72,11 +72,15 @@ func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
 		}
 		sel.RemoveAttr("style")
 	})
+	d.Find("td[bgcolor] > a:first-child").Each(func(_ int, sel *goquery.Selection) {
+		sel.RemoveAttr("href")
+		sel.Get(0).Data = "b"
+	})
 
 	html, _ := goquery.OuterHtml(sel)
 
 	policy := bluemonday.NewPolicy()
-	policy.AllowElements("table", "tbody", "tr", "td", "em", "i", "span")
+	policy.AllowElements("table", "tbody", "tr", "td", "em", "i", "span", "b")
 	policy.AllowAttrs("class").OnElements("span")
 
 	w.Header().Add("Content-Type", "encoding/json")
