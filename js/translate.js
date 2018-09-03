@@ -454,6 +454,7 @@
   const stickyHistory = {
     0: [],
     1: [],
+    2: [],
   };
   let stickyCurrent = [];
 
@@ -487,7 +488,7 @@
     const data = { query: text.trim() };
     if (exact) data.exact = 1;
     $.ajax({
-      url: '/syn',
+      url: '/plugins/academic',
       method: 'GET',
       data,
     })
@@ -520,7 +521,7 @@
   function loadDefinitions(text) {
     const $page = $('.sticky-page.oxford-dictionaries');
     $.ajax({
-      url: '/def',
+      url: '/plugins/oxford',
       method: 'GET',
       data: { query: text.trim() },
     })
@@ -531,6 +532,27 @@
       .fail((xhr, status, err) => {
         if (xhr.status == 404) {
           navigated(0);
+          $page.text('Not found.');
+        } else {
+          bootbox.alert('Error: ' + err);
+        }
+      });
+  }
+
+  function loadTranslations(text) {
+    const $page = $('.sticky-page.multitran');
+    $.ajax({
+      url: '/plugins/multitran',
+      method: 'GET',
+      data: { query: text.trim() },
+    })
+      .done(data => {
+        navigated(2, text);
+        $page.html(data.html);
+      })
+      .fail((xhr, status, err) => {
+        if (xhr.status == 404) {
+          navigated(2);
           $page.text('Not found.');
         } else {
           bootbox.alert('Error: ' + err);
@@ -619,6 +641,8 @@
         loadDefinitions(value);
       } else if (index === 1) {
         loadSynonyms(value);
+      } else if (index === 2) {
+        loadTranslations(value);
       }
     });
     $('.sticky-content')
@@ -684,6 +708,7 @@
             loadSynonyms(text);
           } else {
             loadDefinitions(text);
+            loadTranslations(text);
           }
         } else if (e.which == 81 /* Alt-Q */) {
           e.preventDefault();

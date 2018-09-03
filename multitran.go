@@ -16,19 +16,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html"
 	"net/http"
 	"net/url"
-	"strings"
+
+	"golang.org/x/net/html/charset"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/microcosm-cc/bluemonday"
 )
 
-const oxfordBaseURL = "https://en.oxforddictionaries.com/definition/"
+const multitranBaseURL = "https://www.multitran.ru/c/m.exe?l1=2&l2=1&s="
 
-func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
-	resp, err := httpClient.Get(oxfordBaseURL + url.PathEscape(r.FormValue("query")))
+func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
+	resp, err := httpClient.Get(multitranBaseURL + url.QueryEscape(r.FormValue("query")))
 	if err != nil {
 		internalError(w, err)
 		return
@@ -40,41 +40,49 @@ func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := goquery.NewDocumentFromReader(resp.Body)
+	utf8r, err := charset.NewReaderLabel("cp1251", resp.Body)
 	if err != nil {
 		internalError(w, err)
 		return
 	}
 
-	var result []string
-	if resp.Request.URL.Path == "/search" {
-		d.Find(".similar-results .search-results a").Each(func(_ int, sel *goquery.Selection) {
-			result = append(result, `<a class="similar">`+html.EscapeString(sel.Text())+"</a>")
-		})
-	} else {
-		policy := bluemonday.NewPolicy()
-		policy.AllowElements("button", "div", "em", "h2", "h3", "li", "ol", "p", "section", "span", "strong", "sup", "ul")
-		policy.AllowAttrs("class").Globally()
-
-		d.Find(`section.gramb, section.etym, .hwg`).Each(func(_ int, sel *goquery.Selection) {
-			sel.Find(".rsbtn_play, .speaker, .ipaLink, .exs + a").
-				Each(func(_ int, sel *goquery.Selection) {
-					sel.Remove()
-				})
-			html, _ := goquery.OuterHtml(sel)
-			result = append(result, policy.Sanitize(html))
-		})
+	d, err := goquery.NewDocumentFromReader(utf8r)
+	if err != nil {
+		internalError(w, err)
+		return
 	}
 
-	if len(result) == 0 {
+	sel := d.Find("form#translation")
+	var tbl *goquery.Selection
+	for i := 0; i < 5; i++ {
+		sel = sel.Next()
+		if goquery.NodeName(sel) == "table" {
+			tbl = sel
+			break
+		}
+	}
+	if tbl == nil {
 		http.NotFound(w, r)
 		return
 	}
+
+	d.Find(`span[style]`).Each(func(_ int, sel *goquery.Selection) {
+		if sel.AttrOr("style", "") == "color:gray" {
+			sel.SetAttr("class", "text-muted")
+		}
+		sel.RemoveAttr("style")
+	})
+
+	html, _ := goquery.OuterHtml(sel)
+
+	policy := bluemonday.NewPolicy()
+	policy.AllowElements("table", "tbody", "tr", "td", "em", "i", "span")
+	policy.AllowAttrs("class").OnElements("span")
 
 	w.Header().Add("Content-Type", "encoding/json")
 	json.NewEncoder(w).Encode(struct {
 		HTML string `json:"html"`
 	}{
-		strings.Join(result, ""),
+		policy.Sanitize(html),
 	})
 }

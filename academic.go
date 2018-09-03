@@ -41,7 +41,7 @@ var (
 	useMorph = morph.Init() == nil
 )
 
-func (a *App) Synonyms(w http.ResponseWriter, r *http.Request) {
+func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 	type seekResult struct {
 		ID    int    `json:"id"`
 		Value string `json:"value"`

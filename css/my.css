@@ -476,3 +476,4 @@ a.similar:focus {
 .tooltip-inner { background-color: #a5a5a5; }
 .tooltip-inner input { color: #333; }
 .tooltip.bottom .tooltip-arrow { border-bottom-color: #a5a5a5; }
+.multitran span.text-muted > span { color: #333; }

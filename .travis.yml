@@ -14,6 +14,7 @@ install:
   - go get github.com/opennota/morph
   - go get github.com/opennota/substring
   - go get github.com/PuerkitoBio/goquery
+  - go get golang.org/x/net/html/charset
   - go build ./...
 
 script:
