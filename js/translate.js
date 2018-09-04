@@ -583,11 +583,19 @@
   function getSelection(el) {
     const sel = document.getSelection();
     if (!sel || !sel.rangeCount) return;
-    const text = sel.toString();
+    let text = sel.toString();
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=85686
     if (text === '' && el.nodeName == 'TEXTAREA') {
-      return el.value.substring(el.selectionStart, el.selectionEnd);
+      if (el.selectionStart < el.selectionEnd)
+        return el.value.substring(el.selectionStart, el.selectionEnd);
+      let start = el.selectionStart;
+      let end = el.selectionEnd;
+      const rWord = /[a-zа-яё-]/iu;
+      text = el.value;
+      while (start > 0 && rWord.test(text.charAt(start - 1))) start--;
+      while (end < text.length && rWord.test(text.charAt(end))) end++;
+      return text.substring(start, end).replace(/^-|-$/g, '');
     }
 
     return text;
