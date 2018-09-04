@@ -14,8 +14,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -28,19 +29,31 @@ import (
 const multitranBaseURL = "https://www.multitran.ru/c/m.exe?l1=2&l2=1&s="
 
 func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
-	resp, err := httpClient.Get(multitranBaseURL + url.QueryEscape(r.FormValue("query")))
-	if err != nil {
-		internalError(w, err)
-		return
-	}
-	defer resp.Body.Close()
+	url := multitranBaseURL + url.QueryEscape(r.FormValue("query"))
+	data, _ := cache.Get(url)
+	if data == nil {
+		resp, err := httpClient.Get(url)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
-		return
+		if resp.StatusCode != 200 {
+			internalError(w, httpStatus{resp.StatusCode, url})
+			return
+		}
+
+		data, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+
+		cache.Set(url, data)
 	}
 
-	utf8r, err := charset.NewReaderLabel("cp1251", resp.Body)
+	utf8r, err := charset.NewReaderLabel("cp1251", bytes.NewReader(data))
 	if err != nil {
 		internalError(w, err)
 		return

@@ -14,8 +14,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -41,11 +43,47 @@ var (
 	useMorph = morph.Init() == nil
 )
 
-func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
-	type seekResult struct {
-		ID    int    `json:"id"`
-		Value string `json:"value"`
+type seekResult struct {
+	ID    int    `json:"id"`
+	Value string `json:"value"`
+}
+
+func seekSynonym(query string) ([]seekResult, error) {
+	url := synSeekBaseURL + url.QueryEscape(query)
+	data, _ := cache.Get(url)
+	if data == nil {
+		resp, err := httpClient.Get(url)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return nil, httpStatus{resp.StatusCode, url}
+		}
+
+		data, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		cache.Set(url, data)
 	}
+
+	rd := bytes.NewReader(data)
+	var results []seekResult
+	if err := json.NewDecoder(rd).Decode(&struct {
+		Results *[]seekResult
+	}{
+		&results,
+	}); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 
 	query := strings.ToLower(r.FormValue("query"))
 	if useMorph && r.FormValue("exact") == "" {
@@ -82,19 +120,8 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	resp, err := httpClient.Get(synSeekBaseURL + url.PathEscape(query))
+	results, err := seekSynonym(query)
 	if err != nil {
-		internalError(w, err)
-		return
-	}
-	defer resp.Body.Close()
-
-	var results []seekResult
-	if err := json.NewDecoder(resp.Body).Decode(&struct {
-		Results *[]seekResult
-	}{
-		&results,
-	}); err != nil {
 		internalError(w, err)
 		return
 	}
@@ -103,19 +130,31 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err = httpClient.Get(synonymsBaseURL + fmt.Sprint(results[0].ID))
-	if err != nil {
-		internalError(w, err)
-		return
-	}
-	defer resp.Body.Close()
+	url := synonymsBaseURL + fmt.Sprint(results[0].ID)
+	data, _ := cache.Get(url)
+	if data == nil {
+		resp, err := httpClient.Get(url)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
-		return
+		if resp.StatusCode != 200 {
+			internalError(w, httpStatus{resp.StatusCode, url})
+			return
+		}
+
+		data, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+
+		cache.Set(url, data)
 	}
 
-	d, err := goquery.NewDocumentFromReader(resp.Body)
+	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))
 	if err != nil {
 		internalError(w, err)
 		return

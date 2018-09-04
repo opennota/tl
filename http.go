@@ -44,6 +44,15 @@ var (
 	httpClient http.Client
 )
 
+type httpStatus struct {
+	statusCode int
+	url        string
+}
+
+func (s httpStatus) Error() string {
+	return fmt.Sprintf("httpStatus{%d %s}", s.statusCode, s.url)
+}
+
 func logError(err error) {
 	log.Println("ERR", err)
 }

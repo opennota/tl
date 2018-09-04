@@ -14,9 +14,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"html"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -28,27 +29,40 @@ import (
 const oxfordBaseURL = "https://en.oxforddictionaries.com/definition/"
 
 func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
-	resp, err := httpClient.Get(oxfordBaseURL + url.PathEscape(r.FormValue("query")))
-	if err != nil {
-		internalError(w, err)
-		return
-	}
-	defer resp.Body.Close()
+	url := oxfordBaseURL + url.PathEscape(r.FormValue("query"))
+	data, _ := cache.Get(url)
+	if data == nil {
+		resp, err := httpClient.Get(url)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		internalError(w, fmt.Errorf("HTTP %d", resp.StatusCode))
-		return
+		if resp.StatusCode != 200 {
+			internalError(w, httpStatus{resp.StatusCode, url})
+			return
+		}
+
+		data, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			internalError(w, err)
+			return
+		}
+
+		cache.Set(url, data)
 	}
 
-	d, err := goquery.NewDocumentFromReader(resp.Body)
+	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))
 	if err != nil {
 		internalError(w, err)
 		return
 	}
 
 	var result []string
-	if resp.Request.URL.Path == "/search" {
-		d.Find(".similar-results .search-results a").Each(func(_ int, sel *goquery.Selection) {
+	similar := d.Find(".similar-results .search-results a")
+	if similar.Length() > 0 {
+		similar.Each(func(_ int, sel *goquery.Selection) {
 			result = append(result, `<a class="similar">`+html.EscapeString(sel.Text())+"</a>")
 		})
 	} else {
