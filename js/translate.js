@@ -487,6 +487,11 @@
     $el.html('<i class="fa fa-spinner fa-spin">');
   }
 
+  function handleError(xhr, status, err) {
+    if (xhr.readyState === 0) bootbox.alert('Network error');
+    else bootbox.alert('Error: ' + (err || 'unknown error'));
+  }
+
   function loadDefinitions(text) {
     const $page = $('.sticky-page.oxford-dictionaries');
     switchToTab(0);
@@ -504,11 +509,7 @@
         if (xhr.status == 404) {
           navigated(0);
           $page.text('Not found.');
-        } else if (xhr.readyState === 0) {
-          bootbox.alert('Network error');
-        } else {
-          bootbox.alert('Error: ' + (err || 'unknown error'));
-        }
+        } else handleError(xhr, status, err);
       });
   }
 
@@ -543,11 +544,7 @@
         if (xhr.status == 404) {
           navigated(1);
           $page.text('Not found.');
-        } else if (xhr.readyState === 0) {
-          bootbox.alert('Network error');
-        } else {
-          bootbox.alert('Error: ' + (err || 'unknown error'));
-        }
+        } else handleError(xhr, status, err);
       });
   }
 
@@ -568,11 +565,7 @@
         if (xhr.status == 404) {
           navigated(2);
           $page.text('Not found.');
-        } else if (xhr.readyState === 0) {
-          bootbox.alert('Network error');
-        } else {
-          bootbox.alert('Error: ' + (err || 'unknown error'));
-        }
+        } else handleError(xhr, status, err);
       });
   }
 
