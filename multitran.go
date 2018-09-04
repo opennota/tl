@@ -31,7 +31,7 @@ const multitranBaseURL = "https://www.multitran.ru/c/m.exe?l1=2&l2=1&s="
 
 func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
 	query := strings.ToLower(r.FormValue("query"))
-	key := "multitran.ru:" + yoReplacer.Replace(query)
+	key := "m:" + yoReplacer.Replace(query)
 	data, err := cache.Get(key)
 	if data == nil {
 		url := multitranBaseURL + url.QueryEscape(query)

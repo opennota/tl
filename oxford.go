@@ -30,7 +30,7 @@ const oxfordBaseURL = "https://en.oxforddictionaries.com/definition/"
 
 func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
 	query := strings.ToLower(r.FormValue("query"))
-	key := "en.oxforddictionaries.com:" + query
+	key := "o:" + query
 	data, _ := cache.Get(key)
 	if data == nil {
 		url := oxfordBaseURL + url.PathEscape(query)

@@ -49,7 +49,7 @@ type seekResult struct {
 }
 
 func seekSynonym(query string) ([]seekResult, error) {
-	key := "dic.academic.ru:synonyms:0:" + query
+	key := "a:s:0:" + query
 	data, _ := cache.Get(key)
 	if data == nil {
 		url := synSeekBaseURL + url.QueryEscape(query)
@@ -131,7 +131,7 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := "dic.academic.ru:synonyms:1:" + query
+	key := "a:s:1:" + query
 	data, _ := cache.Get(key)
 	if data == nil {
 		url := synonymsBaseURL + fmt.Sprint(results[0].ID)
