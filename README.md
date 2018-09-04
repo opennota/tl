@@ -3,13 +3,15 @@ tl [![License](http://img.shields.io/:license-agpl3-blue.svg)](http://www.gnu.or
 
 ![Screencast](/screencast.gif)
 
-## Installation
+## Install
 
     go get -u github.com/opennota/tl
 
+(You'll need Go 1.11 or newer.)
+
 Or download a pre-compiled binary from the [Releases](https://github.com/opennota/tl/releases) page.
 
-## Usage
+## Use
 
     tl -http :1337 -db /path/to/tl.db
 
