@@ -483,8 +483,13 @@
     );
   }
 
+  function setSpinner($el) {
+    $el.html('<i class="fa fa-spinner fa-spin">');
+  }
+
   function loadSynonyms(text, exact) {
     const $page = $('.sticky-page.academic-synonyms');
+    setSpinner($page);
     const data = { query: text.trim() };
     if (exact) data.exact = 1;
     $.ajax({
@@ -520,6 +525,7 @@
 
   function loadDefinitions(text) {
     const $page = $('.sticky-page.oxford-dictionaries');
+    setSpinner($page);
     $.ajax({
       url: '/plugins/oxford',
       method: 'GET',
@@ -541,6 +547,7 @@
 
   function loadTranslations(text) {
     const $page = $('.sticky-page.multitran');
+    setSpinner($page);
     $.ajax({
       url: '/plugins/multitran',
       method: 'GET',
