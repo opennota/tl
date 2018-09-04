@@ -509,7 +509,10 @@
         if (xhr.status == 404) {
           navigated(0);
           $page.text('Not found.');
-        } else handleError(xhr, status, err);
+        } else {
+          $page.text('');
+          handleError(xhr, status, err);
+        }
       });
   }
 
@@ -544,7 +547,10 @@
         if (xhr.status == 404) {
           navigated(1);
           $page.text('Not found.');
-        } else handleError(xhr, status, err);
+        } else {
+          $page.text('');
+          handleError(xhr, status, err);
+        }
       });
   }
 
@@ -565,7 +571,10 @@
         if (xhr.status == 404) {
           navigated(2);
           $page.text('Not found.');
-        } else handleError(xhr, status, err);
+        } else {
+          $page.text('');
+          handleError(xhr, status, err);
+        }
       });
   }
 
