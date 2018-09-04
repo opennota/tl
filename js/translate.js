@@ -487,8 +487,32 @@
     $el.html('<i class="fa fa-spinner fa-spin">');
   }
 
+  function loadDefinitions(text) {
+    const $page = $('.sticky-page.oxford-dictionaries');
+    switchToTab(0);
+    setSpinner($page);
+    $.ajax({
+      url: '/plugins/oxford',
+      method: 'GET',
+      data: { query: text.trim() },
+    })
+      .done(data => {
+        navigated(0, text);
+        $page.html(data.html);
+      })
+      .fail((xhr, status, err) => {
+        if (xhr.status == 404) {
+          navigated(0);
+          $page.text('Not found.');
+        } else {
+          bootbox.alert('Error: ' + err);
+        }
+      });
+  }
+
   function loadSynonyms(text, exact) {
     const $page = $('.sticky-page.academic-synonyms');
+    switchToTab(1);
     setSpinner($page);
     const data = { query: text.trim() };
     if (exact) data.exact = 1;
@@ -523,30 +547,9 @@
       });
   }
 
-  function loadDefinitions(text) {
-    const $page = $('.sticky-page.oxford-dictionaries');
-    setSpinner($page);
-    $.ajax({
-      url: '/plugins/oxford',
-      method: 'GET',
-      data: { query: text.trim() },
-    })
-      .done(data => {
-        navigated(0, text);
-        $page.html(data.html);
-      })
-      .fail((xhr, status, err) => {
-        if (xhr.status == 404) {
-          navigated(0);
-          $page.text('Not found.');
-        } else {
-          bootbox.alert('Error: ' + err);
-        }
-      });
-  }
-
   function loadTranslations(text) {
     const $page = $('.sticky-page.multitran');
+    switchToTab(2);
     setSpinner($page);
     $.ajax({
       url: '/plugins/multitran',
@@ -719,6 +722,7 @@
           if (!text) return;
           text = text.trim();
           if (text === '') return;
+          $sticky.addClass('pinned').css('display', '');
           if (/[а-яё]/i.test(text)) {
             loadSynonyms(text);
           } else {
