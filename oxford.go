@@ -29,9 +29,11 @@ import (
 const oxfordBaseURL = "https://en.oxforddictionaries.com/definition/"
 
 func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
-	url := oxfordBaseURL + url.PathEscape(r.FormValue("query"))
-	data, _ := cache.Get(url)
+	query := strings.ToLower(r.FormValue("query"))
+	key := "en.oxforddictionaries.com:" + query
+	data, _ := cache.Get(key)
 	if data == nil {
+		url := oxfordBaseURL + url.PathEscape(query)
 		resp, err := httpClient.Get(url)
 		if err != nil {
 			internalError(w, err)
@@ -50,7 +52,7 @@ func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(url, data)
+		cache.Set(key, data)
 	}
 
 	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))

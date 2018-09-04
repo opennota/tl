@@ -49,9 +49,10 @@ type seekResult struct {
 }
 
 func seekSynonym(query string) ([]seekResult, error) {
-	url := synSeekBaseURL + url.QueryEscape(query)
-	data, _ := cache.Get(url)
+	key := "dic.academic.ru:synonyms:0:" + query
+	data, _ := cache.Get(key)
 	if data == nil {
+		url := synSeekBaseURL + url.QueryEscape(query)
 		resp, err := httpClient.Get(url)
 		if err != nil {
 			return nil, err
@@ -67,7 +68,7 @@ func seekSynonym(query string) ([]seekResult, error) {
 			return nil, err
 		}
 
-		cache.Set(url, data)
+		cache.Set(key, data)
 	}
 
 	rd := bytes.NewReader(data)
@@ -84,7 +85,6 @@ func seekSynonym(query string) ([]seekResult, error) {
 }
 
 func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
-
 	query := strings.ToLower(r.FormValue("query"))
 	if useMorph && r.FormValue("exact") == "" {
 		_, norms, _ := morph.Parse(query)
@@ -120,6 +120,7 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	query = yoReplacer.Replace(query)
 	results, err := seekSynonym(query)
 	if err != nil {
 		internalError(w, err)
@@ -130,9 +131,10 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := synonymsBaseURL + fmt.Sprint(results[0].ID)
-	data, _ := cache.Get(url)
+	key := "dic.academic.ru:synonyms:1:" + query
+	data, _ := cache.Get(key)
 	if data == nil {
+		url := synonymsBaseURL + fmt.Sprint(results[0].ID)
 		resp, err := httpClient.Get(url)
 		if err != nil {
 			internalError(w, err)
@@ -151,7 +153,7 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(url, data)
+		cache.Set(key, data)
 	}
 
 	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))

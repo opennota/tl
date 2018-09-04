@@ -19,6 +19,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"golang.org/x/net/html/charset"
 
@@ -29,9 +30,11 @@ import (
 const multitranBaseURL = "https://www.multitran.ru/c/m.exe?l1=2&l2=1&s="
 
 func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
-	url := multitranBaseURL + url.QueryEscape(r.FormValue("query"))
-	data, _ := cache.Get(url)
+	query := strings.ToLower(r.FormValue("query"))
+	key := "multitran.ru:" + yoReplacer.Replace(query)
+	data, err := cache.Get(key)
 	if data == nil {
+		url := multitranBaseURL + url.QueryEscape(query)
 		resp, err := httpClient.Get(url)
 		if err != nil {
 			internalError(w, err)
@@ -50,7 +53,7 @@ func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(url, data)
+		cache.Set(key, data)
 	}
 
 	utf8r, err := charset.NewReaderLabel("cp1251", bytes.NewReader(data))

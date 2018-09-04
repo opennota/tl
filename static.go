@@ -193,7 +193,7 @@ var _escData = map[string]*_escFile{
 	"/css/bootstrap-editable.css": {
 		local:   "css/bootstrap-editable.css",
 		size:    21202,
-		modtime: 1492562363,
+		modtime: 1484454869,
 		compressed: `
 H4sIAAAAAAAC/+xce2/bxrL/u/oU0xqBY0GkKMt2Ihm5QNv0Xhho7+09yTko0NM/VuRI2pri8uyuLCtB
 vvvBPig+RIpLOmkLHFtF5SxnZmdm5/Fbmsvx8Gv4xcOISrKIETx4mPjX/gQGQ7hLvDQmIYK6SpMV7Khc
@@ -259,7 +259,7 @@ g10Lx2Gb3y1S93zN4dHs7LTl5OjIcemNS561ww7a87ueLVT/DgAA//8tnmcw0lIAAA==
 	"/css/bootstrap.min.css": {
 		local:   "css/bootstrap.min.css",
 		size:    121200,
-		modtime: 1492562363,
+		modtime: 1469436808,
 		compressed: `
 H4sIAAAAAAAC/+z9ba/jOLIniL+fT6HOQqEyKy2nJD8d26jz7/vvGcxt4PZ9sdMLDFCdu6Al2lalLKkl
 +TyUx/PZF+KTyGBQkn1OVfdi+yZulw/5YzAYDDLIEBn88uMf/ov3o/f/L4qmbipSek+z6Wy68j4em6bc
@@ -594,7 +594,7 @@ z//jP37aFUVTNxUpp6c0n8Z1PT2R0vvxy/8TAAD//1h8f0Zw2QEA
 	"/css/font-awesome.min.css": {
 		local:   "css/font-awesome.min.css",
 		size:    31000,
-		modtime: 1492562363,
+		modtime: 1482439834,
 		compressed: `
 H4sIAAAAAAAC/8x9TY/kuNHm3b8idwbe6TZKNSXldxa8nv2AAQM29mAf9rAXigql2EmJGpLKrOxG//cX
 khgUlRmU5wXm8BqGXU0+pPgRDAYjHjJ//tN/+8PqT6vVX1VjV//zBkbVsNq87l/fVvl99UvBrnBmTXFf
@@ -717,7 +717,7 @@ tW742zXqbWpRb1fmEsYm9Zjvf/iPAAAA///cOPUCGHkAAA==
 	"/css/my.css": {
 		local:   "css/my.css",
 		size:    12689,
-		modtime: 1535945601,
+		modtime: 1535980163,
 		compressed: `
 H4sIAAAAAAAC/7QaW2/btvo9v4InxYBmx9Jku87FwfK+5z4WWUGJlE2EInUoOnYW9L8f8CaRIiU73Vaj
 SSx9N3787mQuYUmx+ZmVXCAsKO468ATkHkOkfgv9BbwD83oLGGf4Efy4msEtOXrrcVESV0DWUSi5AFJs
@@ -776,7 +776,7 @@ QWIU3bhyPP8fAAD//y/1f+GRMQAA
 	"/fonts/FontAwesome.otf": {
 		local:   "fonts/FontAwesome.otf",
 		size:    134808,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/5z6eXyTxfoHDM80yZ10JkuXpNImdwLIorK12doKKFAWBUHEiCzCTdqmTWiahCRdoXSH
 QqDQNqWUUlqgKpssguB6rMejIrgTPYr79nNFPR500kyK7+dOwKPv88f7fh5Cc10zmbm+M9dc2+TOvRbL
@@ -2647,7 +2647,7 @@ jjCDNtq5/25Jr8U9fXDJNgYimiHPuJ395ekO//4fAAD//zGhgsKYDgIA
 	"/fonts/fontawesome-webfont.eot": {
 		local:   "fonts/fontawesome-webfont.eot",
 		size:    165742,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/8z9C3hU1bk/jn/etW8zk7nvuSSTSTLXPYHEAHONXJIRkVsColJFRIwWFAUUFQSpl22l
 FpUqIlpqrY3XwjnWclrt0RY905u1rVpbOdZa25O22noq2oDWo5DZ+T9775lkEkDb0//3PL95svde9/W+
@@ -4313,7 +4313,7 @@ EEJFyhdvQICfRYCYuW9T0vfpn3R8QzJ7+/GqxS00frV17NH/LwAA//9PcB26bocCAA==
 	"/fonts/fontawesome-webfont.svg": {
 		local:   "fonts/fontawesome-webfont.svg",
 		size:    444379,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/+y9W49cSZIm9h6/wkQBetE6y838vtM9i92Z3YEAUbvAXgQ9FbLIqIrcPszkSXpFdfPX
 C/aZnxORGZfMZLGqu6VBdzEi4/jxu5vb9bM//Ls/f5xov334fHt/98c3/Na/oc/95u7DzXR/t/3jm7v7
@@ -6535,7 +6535,7 @@ FdEvv/7oUA+VjS+//ehQD7nOL7//6FAP+YQvf/zoUA/h65cv3z/U9uXf//3L/v/+un01WE3pw8H+9V/+
 	"/fonts/fontawesome-webfont.ttf": {
 		local:   "fonts/fontawesome-webfont.ttf",
 		size:    165548,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/8z9C3hU1bk/jn/etW8zk7nvuSSTSTLXPYHEAHONXJIRkVsColKliBgRFAUUFQWpl22l
 FpUqIlpqrY3Xwqm1nFZ7tEXP9GZtq9ZWjrXW9qSttp6KNqD1KGR2/s/eeyaZBND2nP/3PL95svde9/Wu
@@ -8200,7 +8200,7 @@ FLp9Ct0+ha6iYX2KhvX1KXT7FLp9Ct0+hW6fQrdPodun0O1T6PYrdPsVuv0K3X6Fbr9Ct1+h26/Q7aeS
 	"/fonts/fontawesome-webfont.woff": {
 		local:   "fonts/fontawesome-webfont.woff",
 		size:    98024,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/2ySU3AlDLCtd2w7E0xsTOyJbU5s27Zt27ZtJzu2bdu3/rrnvJ2u+qof+qFXfbVc5URF
 ASAAAADE5xSAAAAAQEOqAOAAKMD/MaKiyjIAAAgjAADA+w/LHrF2MWERUQAARBoAABACAIDfoLcAcDkl
@@ -9841,7 +9841,7 @@ Yc3SlFxPim8oxZ3hLfa2ZLv5n9VT4mHWald7hrfa25L9puYkd6WnOctT42E2WpWS/ayGMnelpDnLTSN5
 	"/fonts/fontawesome-webfont.woff2": {
 		local:   "fonts/fontawesome-webfont.woff2",
 		size:    77160,
-		modtime: 1492562363,
+		modtime: 1482439833,
 		compressed: `
 H4sIAAAAAAAC/wASQO2/d09GMgABAAAAAS1oAA0AAAAChpgAAS0OAAQBywAAAAAAAAAAAAAAAAAAAAAA
 AAAAP0ZGVE0cGiAGYACFchEIComZKIe2WAE2AiQDlXALlhAABCAFiQYHtHVbUglyR2H3kYQqug2BJ+09
@@ -11136,7 +11136,7 @@ akiI/xcAAP//p8MXVWgtAQA=
 	"/js/aligner.js": {
 		local:   "js/aligner.js",
 		size:    7543,
-		modtime: 1523408527,
+		modtime: 1523360316,
 		compressed: `
 H4sIAAAAAAAC/9xZX5MbORF/30/RW7hW48Q7Tg54wMG5OuAKKKoglSzFAzk4eaZt61YjTUk963Vl/d0p
 jTQzmj/2ba4IUOTB9kqtVv/9dauzfAE7qTdcQsl3+Oeq2KBZgNIqwxWZCuHF8uoq2VYqI6FVModPVwCs
@@ -11178,7 +11178,7 @@ hXs8ViV40UpuCSfq+LAR9Ezq1q+X9efFuK6PuijER+qCcN3v+04jq/pv93mau8uWS3gQxQrIrr8C6z8P
 	"/js/editable-title.js": {
 		local:   "js/editable-title.js",
 		size:    736,
-		modtime: 1521679983,
+		modtime: 1521643714,
 		compressed: `
 H4sIAAAAAAAC/3SSUW7jIBCG33OKkTYSg5RSqY+uvGfYG6yoGcdox2CZoWkU5e4rsOO6Xe0L2P//McP8
 AvscOvExoIbbAUDlRJBk9p2o1wPA0fTBkPNi35iMo95mlmTG6AhaUD6wD/Qv2cd5NByt8+FcuP8Qb1kk
@@ -11193,7 +11193,7 @@ AAD//6jLA1LgAgAA
 	"/js/index.js": {
 		local:   "js/index.js",
 		size:    2097,
-		modtime: 1523242641,
+		modtime: 1523183026,
 		compressed: `
 H4sIAAAAAAAC/4RVW0/bTBB9z6+YT4rk3Q/IDQQSwUiVEGqR0j7QF4RQ2doTktZZR+sxqYv836u9+RYH
 XsJh58yZszO7a7bMZUTrVDIObwOAIM8QMlLriIL5YAAQpTIj2KSSVhmE8DgAAAjuhAyOLbzFnx4uhPLw
@@ -11214,7 +11214,7 @@ AA==
 	"/js/lib/bootbox.min.js": {
 		local:   "js/lib/bootbox.min.js",
 		size:    9972,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/6xa7Y8ct3n/7r9ijih2Z7y8uTvBQIHZ4x1kxQlS2ZZbqyjQ7SLgDDk7vJ0ZjjjcPZ13
 B7BlA00LB60/qKiBooXTFk3SJlHcODmrSb4k/npafToJ+SJAaJM/oyA5b/ty9qrolzu+PG98fg8fPuTs
@@ -11285,7 +11285,7 @@ YrCB+YYFyqOdpaz1lt94C9vBfO4rksLp/28AAAD//3T7Dp30JgAA
 	"/js/lib/bootstrap-editable.min.js": {
 		local:   "js/lib/bootstrap-editable.min.js",
 		size:    75929,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/+y9+3vjxpUo+Hv+CrKuQ6HMIkXKyTgGVeI63fbYM+nYO91ONpfN8RaAAgmJBGgAlFom
 cf/2/eqJKqBAUnYnk9l7P39uEfV+njrvc/1pv/f/jGiUlCTY0N6o9zgd/3487f3m09636Wi3ISHtsdwk
@@ -11614,7 +11614,7 @@ Auvrn4Gt8ItRwr83d6ExsF/BYDBeP+nS9LJ+/n/JI2BT/WfjE2xplOy34GXw4hRjQF/kNniY/eb/CwAA
 	"/js/lib/bootstrap.min.js": {
 		local:   "js/lib/bootstrap.min.js",
 		size:    37045,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/8y9a3fbuNUo/L2/gsLMwwAjiJaTXp5SYbQyyfR9c047M2cm065zXLUFSfDi0KSGpO2k
 lvrbz8KVAAlKdnpZ54stkgC4sbHvewO8+GrxC+8r7+um6bu+JXvv7kXwIviNB4u+34cXFzntY/UsSJob
@@ -11786,7 +11786,7 @@ pH4cDg9HLOWlvPU1xxI/5FSW1gu8jRqgUbf3zd7s0zd785G285gqs8IQm/8bAAD//y+jxWq1kAAA
 	"/js/lib/jquery.autogrowtextarea.js": {
 		local:   "js/lib/jquery.autogrowtextarea.js",
 		size:    3010,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/7RVbW/bNhD+bP+KqwdUcmtLfdk+1E6yOYnSeHCTzHIaFNs+0NLJYiuRGklZcYf894Gk
 /BbbXQNsAYIEel5OD+948l88a8IL6P6HP9qvNbkM4DQIxt27wTiA0fAsuAqDFrhjnFNJOYMf37R7mnn0
@@ -11813,7 +11813,7 @@ HpVyB7buF1TYAMYSEi5MHSCZQBIvoBAoba1vbNpm46Hdbz70m/8EAAD//6KqdrDCCwAA
 	"/js/lib/jquery.form.js": {
 		local:   "js/lib/jquery.form.js",
 		size:    43892,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/7x9/XfbNrLo7/4rxo6PSSUyZTtNtytXzUvzcZt7k6Yvce9mn5+3ByIhCTZFKAAo27f2
 //4OBh8Ev2Sl7b49ZxuLBAeDwWC+MBiMHu/uwGO4/N8lFbfwhosl/JKXc1bop2sqJOPFGJ4mz46To8OT
@@ -12023,7 +12023,7 @@ kzuMq3Ke9kmS8xo+7bfx0hemMAh6tmwWBg1/Y2br6+Zp2e4WtR7ud3butYX1/wIAAP//8mqvVXSrAAA=
 	"/js/lib/jquery.min.js": {
 		local:   "js/lib/jquery.min.js",
 		size:    86927,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/7S9+ZbbNvIo/P/3FC2OfwzQgtiSPcm9QzWs43hJnGWSiZ1lhqJz2CIkMWYDCgm1uiNy
 nv07KAAkSFF2Zu69yXGLBLGjUKgq1HJ1Obr47R97Vjxc3D0JngSzi+oCrfDFV28uXok9TxOZCX6R8PRC
@@ -12538,7 +12538,7 @@ RxH+TrPtyh5Tgp7phC/SAYbxeyPn/6iEnP7xN30n/w99/KJjbimry6q8LfKlEkPK6PSFlotANXwh/kMB
 	"/js/lib/jquery.scrollTo.js": {
 		local:   "js/lib/jquery.scrollTo.js",
 		size:    5707,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/5w43XLbuNXX0lOczKcNyZgmndx8s3JV14033XSS3bSbTi4cbwciD0XEIMAFQEuK7Zne
 9wF630fbJ+kcAPyRnex06gsPhfOD8/+D/NmTOTyDT3/pUO8zU2glxHtFRy9Vu9d8U1uIiwRenJz8P5xr
@@ -12586,7 +12586,7 @@ fQHr9Xps1Hu/zPel6/ztBYTnPj8G95r3bj+dU6n7TwAAAP//mwRW+ksWAAA=
 	"/js/lib/js.cookie.js": {
 		local:   "js/lib/js.cookie.js",
 		size:    3886,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/5xXa2/aTBb+bH7FSaQWOxBDSJPuhmWrhLTadLet1ItWWsJKE/sAE8yMNTNOimL++6u5
 eGwI6Xv50CqeOec8z7nOoXd00IIj+EgeyLdE0FzBmPMlRXgYxIO4r+8WSuXyotebU7Uo7uKEr3r38jgx
@@ -12619,7 +12619,7 @@ OLhHqhbjqkhhZBZvc7n1i0RH2x1oge0fJpto2DJ2fwsAAP///yCu6i4PAAA=
 	"/js/lib/markdown-it.min.js": {
 		local:   "js/lib/markdown-it.min.js",
 		size:    106587,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/+T9DXfbNrI4jH8Vi7fLkiUkk5IsW5RgXddJ2+wm2/7b7v7O/8qKl6IgiTVFKiQV27V8
 P/tzZvBCkKKcpLv7u889T3KOxRmAeBkMBjODAdha7pKwiNLEYvZTtLSMdP4bCwuD0uJxy9LlCXvYplmR
@@ -13201,7 +13201,7 @@ Rcet9tS2Wm37aF/9X/9vAAAA//+vth7tW6ABAA==
 	"/js/lib/popper.min.js": {
 		local:   "js/lib/popper.min.js",
 		size:    20495,
-		modtime: 1522895892,
+		modtime: 1522409043,
 		compressed: `
 H4sIAAAAAAAC/6x8a5fbtrXo9/wK6ZyWACyIIyXNvedSRrQce9y49SvxOGlKc9UcEZIQUwADQPPoSP/9
 LrxIUNKM3azzIRkR2AA2NvZ7Az579NXgqWhuJVut9QA+RYPntKKSLcTgn+xK1GLw9WT6P18NnjGlJbvc
@@ -13330,7 +13330,7 @@ SXxWYsN4+ptKN2Xz1f8PAAD//0QKSt0PUAAA
 	"/js/read.js": {
 		local:   "js/read.js",
 		size:    1322,
-		modtime: 1526368401,
+		modtime: 1523273080,
 		compressed: `
 H4sIAAAAAAAC/6xTwW7cIBC971eMFEvgyMJRpF4SOZf+QA69N8QMGxQWHJjdNNr43ytss2ZTrapKvRjD
 vHkzD96017C1/llaePTDgKGBZ+9ffxoF1+2G673ryXjHazhuANg+IkQKpid2v9kAVFz5fr9DR7UIKNUH
@@ -13347,7 +13347,7 @@ Fij7F85NA2inviqO9oIXTxxjoTN9xzp12LZwMLs7oNjdQpy/790tIG1+BwAA//8kKFw4KgUAAA==
 	"/js/remove-book.js": {
 		local:   "js/remove-book.js",
 		size:    973,
-		modtime: 1521679983,
+		modtime: 1521643714,
 		compressed: `
 H4sIAAAAAAAC/1xTTY+bMBC976+YlSLZqFkj7ZGE9LK5VT1U/QP+GMCNsVf2kE1V5b9XBpJALGFh5s17
 j5kxbwavyQbPC/j3AsCGhJAoWk1s9wKw4SbooUdPhYgozV/OC6gPIxbAIcFGkYcaNpwJNRAF/xaxD2dk
@@ -13364,7 +13364,7 @@ AA==
 	"/js/scratchpad.js": {
 		local:   "js/scratchpad.js",
 		size:    516,
-		modtime: 1521679983,
+		modtime: 1521643714,
 		compressed: `
 H4sIAAAAAAAC/4yPUW7iMBCG3znFLy3CtgRGy76BshfYU3idgVhJnNQeQ6MKiYNUvUCP0DeOwkmqEKC0
 fenLWJrv93wzcp28Zdd4qfA0AkSKhMjBWRarETCWeWNTTZ6VDmTyTkqF7O85C1TEqHNkqE0o82bnHcuB
@@ -13378,7 +13378,7 @@ QDx6DwAA//++F0tSBAIAAA==
 	"/js/translate.js": {
 		local:   "js/translate.js",
 		size:    23294,
-		modtime: 1536032118,
+		modtime: 1536057496,
 		compressed: `
 H4sIAAAAAAAC/+x83W7kNpbwvZ+C7dQXSXFJZXdmBoOyy42g2zPzYbJJNjYwCdxOhyWxqhizRIWiylWJ
 DeQNFgvs5WIv52Zu9n7u8gQ7r5AnWfBPIimpqtw/2SyyGEzaJR0eHp5zeHj+qNEHYE7oFBLwnNJbjMoh
@@ -13476,7 +13476,7 @@ AAA=
 	"/template/add.html": {
 		local:   "template/add.html",
 		size:    3201,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/9xXTW/jNhC951fM8lB0gcpEDgWKVnIRpHtoD5sAMQr0SIkji1mK1JIjO66R/16QtGxJ
 iYuskdNeEo05n+9xnuX8wx93t6t/7j9BQ61eXuXpH0DeoJDhASBvkQQY0WLBNgq3nXXEoLKG0FDBtkpS
@@ -13500,7 +13500,7 @@ DIQ3fIEMAAA=
 	"/template/aligner.html": {
 		local:   "template/aligner.html",
 		size:    5317,
-		modtime: 1523408527,
+		modtime: 1523360316,
 		compressed: `
 H4sIAAAAAAAC/8RYX2/bNhB/76e4Ei3aoFW0FCiwtZKKIe2GAkMbLMGAPVLSyWJKkSpJ2U4Nf/eBlGRR
 spw4yYa9WOKfO97vdPe7o6OnH7+eX/198QlKU/HkSdQ+AKISaW5fAKIKDQVBK4zJkuGqlsoQyKQwKExM
@@ -13533,7 +13533,7 @@ FAAA
 	"/template/book.html": {
 		local:   "template/book.html",
 		size:    14681,
-		modtime: 1535941804,
+		modtime: 1535980163,
 		compressed: `
 H4sIAAAAAAAC/9QbXZPbtvH9fgWCJE08LY+Np53p2KQ8qeNk0kls13dJp08eiFyJ8IEADSwlXT333zsA
 P8QPUKJOd03qB4sEsbvA7mK/sBd99t2bl9f/fvuKZJiLxUVU/RASZcBS+0BIlAMyIlkOMd1w2BZKIyWJ
@@ -13588,7 +13588,7 @@ Az4jQbC4+G8AAAD//8usSyNZOQAA
 	"/template/index.html": {
 		local:   "template/index.html",
 		size:    4053,
-		modtime: 1535679937,
+		modtime: 1535780359,
 		compressed: `
 H4sIAAAAAAAC/6xXbW/bNhD+3l9xJTagBSarWYFh6yQXXbsBBQas2IIN2zdaPFtMKJIlz04MQ/99oN4l
 S5nTLF8skvfy3N1zRyZ5/uG399d/f/oZcirU+llS/wAkOXIRPgCSAomD5gWm7CDxzhpHDDKjCTWl7E4K
@@ -13615,7 +13615,7 @@ ELQBGjx44Yi0mn3Thdfi+i+uCcgAFwKMxrejcZHE9vxCH7wiqpdOFVAS1/+9/xsAAP//ou1ZwNUPAAA=
 	"/template/read.html": {
 		local:   "template/read.html",
 		size:    2139,
-		modtime: 1523435440,
+		modtime: 1523273080,
 		compressed: `
 H4sIAAAAAAAC/5xW0U7jOhB95yvmWuhCdUlD364g6T4si4SEtCvEIu0TcuNpM+A6wZ4Gqm7+feUkTZNC
 y8ITtmbmzDnHh0D0z8X3r7e/fnyDlOd6fBDVPwCiFKXyB4BojizByDnGoiB8zjPLApLMMBqOxTMpTmOF
@@ -13636,7 +13636,7 @@ AP//UnET2FsIAAA=
 	"/template/remove.html": {
 		local:   "template/remove.html",
 		size:    1296,
-		modtime: 1522377605,
+		modtime: 1521717222,
 		compressed: `
 H4sIAAAAAAAC/5xUTXPUMAy991eoPpP19MaAsxfKoScYphdOjBKrjVrHDraS7k5m/zuTeLNflA5wWnv1
 3pP0JMdc3375dP/962dopHXrK5N/AExDaKcDgGlJEDy2VKqB6aULURTUwQt5KdULW2lKSwPXVMyXd8Ce
@@ -13653,7 +13653,7 @@ B9XSeyUeKvGFnTyK0PXOFZEfG4EMLJbpHXLnMR4SZ9h+kbXlIa953m6j84fvVwAAAP//B632NRAFAAA=
 	"/template/scratchpad.html": {
 		local:   "template/scratchpad.html",
 		size:    1699,
-		modtime: 1522898724,
+		modtime: 1522678825,
 		compressed: `
 H4sIAAAAAAAC/5RVTW/bOBC951fM8rCnlbm+LXYpL9AmhwAFEjTuoUdKHEeMKVIlR3IMQ/+9oGTJtPPR
 5iQSnHl8781wJP64vvu8/n5/AxXVZnUlxg+AqFCquAAQNZIEK2vMWadx1zhPDEpnCS3lbKcVVbnCTpeY

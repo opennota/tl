@@ -14,82 +14,56 @@
 package main
 
 import (
-	"bytes"
-	"compress/gzip"
-	"io/ioutil"
+	"encoding/hex"
+	"fmt"
+	"hash/crc32"
 	"os"
 	"path/filepath"
 
-	"github.com/boltdb/bolt"
+	"github.com/opennota/diskv"
 )
 
 type Cache struct {
-	db *bolt.DB
+	d *diskv.Diskv
 }
 
 var cache Cache
 
 func init() {
-	cacheDir, err := os.UserCacheDir()
+	ucd, err := os.UserCacheDir()
 	if err != nil {
 		return
 	}
 
-	d := filepath.Join(cacheDir, "tl")
-	os.Mkdir(d, 0700)
+	d := diskv.New(diskv.Options{
+		BasePath: filepath.Join(ucd, "tl"),
+		Transform: func(s string) []string {
+			s = fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(s)))
+			return []string{s[:1], s[1:3]}
+		},
+		CacheSizeMax: 1024 * 1024,
+		Compression:  diskv.NewGzipCompression(),
+	})
 
-	db, err := bolt.Open(filepath.Join(d, "cache.db"), 0600, nil)
-	if err != nil {
-		return
-	}
-
-	if err := db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte("all"))
-		return err
-	}); err != nil {
-		return
-	}
-
-	cache = Cache{db}
+	cache = Cache{d}
 }
 
 func (c Cache) Get(key string) ([]byte, error) {
-	if c.db == nil {
+	if c.d == nil {
 		return nil, nil
 	}
 
-	var data []byte
-	if err := c.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("all"))
-		data = b.Get([]byte(key))
-		return nil
-	}); err != nil {
-		return nil, err
-	}
+	dkey := hex.EncodeToString([]byte(key))
 
-	gzr, err := gzip.NewReader(bytes.NewReader(data))
-	if err != nil {
-		return nil, err
-	}
-	return ioutil.ReadAll(gzr)
+	return c.d.Read(dkey)
 }
 
 func (c Cache) Set(key string, data []byte) error {
-	if c.db == nil {
+	if c.d == nil {
 		return nil
 	}
 
-	var buf bytes.Buffer
-	gzw := gzip.NewWriter(&buf)
-	if _, err := gzw.Write(data); err != nil {
-		return err
-	}
-	if err := gzw.Flush(); err != nil {
-		return err
-	}
+	dkey := hex.EncodeToString([]byte(key))
 
-	return c.db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("all"))
-		return b.Put([]byte(key), buf.Bytes())
-	})
+	return c.d.Write(dkey, data)
 }
