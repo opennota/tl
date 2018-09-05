@@ -52,7 +52,7 @@ func (a *App) Oxford(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(key, data)
+		cache.Put(key, data)
 	}
 
 	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))

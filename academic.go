@@ -68,7 +68,7 @@ func seekSynonym(query string) ([]seekResult, error) {
 			return nil, err
 		}
 
-		cache.Set(key, data)
+		cache.Put(key, data)
 	}
 
 	rd := bytes.NewReader(data)
@@ -153,7 +153,7 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(key, data)
+		cache.Put(key, data)
 	}
 
 	d, err := goquery.NewDocumentFromReader(bytes.NewReader(data))

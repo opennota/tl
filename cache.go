@@ -14,17 +14,14 @@
 package main
 
 import (
-	"encoding/hex"
-	"fmt"
-	"hash/crc32"
 	"os"
 	"path/filepath"
 
-	"github.com/opennota/diskv"
+	"github.com/opennota/dkv"
 )
 
 type Cache struct {
-	d *diskv.Diskv
+	d *dkv.Store
 }
 
 var cache Cache
@@ -35,15 +32,10 @@ func init() {
 		return
 	}
 
-	d := diskv.New(diskv.Options{
-		BasePath: filepath.Join(ucd, "tl"),
-		Transform: func(s string) []string {
-			s = fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(s)))
-			return []string{s[:1], s[1:3]}
-		},
-		CacheSizeMax: 1024 * 1024,
-		Compression:  diskv.NewGzipCompression(),
-	})
+	d, err := dkv.New(filepath.Join(ucd, "tl"))
+	if err != nil {
+		return
+	}
 
 	cache = Cache{d}
 }
@@ -53,17 +45,13 @@ func (c Cache) Get(key string) ([]byte, error) {
 		return nil, nil
 	}
 
-	dkey := hex.EncodeToString([]byte(key))
-
-	return c.d.Read(dkey)
+	return c.d.Get(key)
 }
 
-func (c Cache) Set(key string, data []byte) error {
+func (c Cache) Put(key string, data []byte) error {
 	if c.d == nil {
 		return nil
 	}
 
-	dkey := hex.EncodeToString([]byte(key))
-
-	return c.d.Write(dkey, data)
+	return c.d.Put(key, data)
 }

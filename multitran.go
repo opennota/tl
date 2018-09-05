@@ -53,7 +53,7 @@ func (a *App) Multitran(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache.Set(key, data)
+		cache.Put(key, data)
 	}
 
 	utf8r, err := charset.NewReaderLabel("cp1251", bytes.NewReader(data))
