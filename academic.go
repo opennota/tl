@@ -122,17 +122,24 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 
 	query = yoReplacer.Replace(query)
 	results, err := seekSynonym(query)
-	if err != nil {
-		internalError(w, err)
-		return
-	}
-	if len(results) == 0 {
-		http.NotFound(w, r)
-		return
-	}
-
 	key := "a:s:1:" + query
 	data, _ := cache.Get(key)
+
+	if err != nil {
+		if data == nil {
+			internalError(w, err)
+			return
+		}
+		logError(err)
+	}
+	if len(results) == 0 {
+		if data == nil {
+			http.NotFound(w, r)
+			return
+		}
+		results = []seekResult{{0, query}}
+	}
+
 	if data == nil {
 		url := synonymsBaseURL + fmt.Sprint(results[0].ID)
 		resp, err := httpClient.Get(url)
