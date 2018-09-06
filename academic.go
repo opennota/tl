@@ -17,12 +17,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"hash/crc32"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"regexp"
 	"sort"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/opennota/morph"
 
@@ -48,8 +50,21 @@ type seekResult struct {
 	Value string `json:"value"`
 }
 
+func fitKey(key string) string {
+	if len(key) <= 127 {
+		return key
+	}
+	key = key[:127-10]
+	r, size := utf8.DecodeLastRuneInString(key)
+	if r == utf8.RuneError {
+		key = key[:len(key)-size]
+	}
+	return key + fmt.Sprintf("..%08x", crc32.ChecksumIEEE([]byte(key)))
+}
+
 func seekSynonym(query string) ([]seekResult, error) {
 	key := "a:s:0:" + query
+	key = fitKey(key)
 	data, _ := cache.Get(key)
 	if data == nil {
 		url := synSeekBaseURL + url.QueryEscape(query)
@@ -123,6 +138,7 @@ func (a *App) Academic(w http.ResponseWriter, r *http.Request) {
 	query = yoReplacer.Replace(query)
 	results, err := seekSynonym(query)
 	key := "a:s:1:" + query
+	key = fitKey(key)
 	data, _ := cache.Get(key)
 
 	if err != nil {
