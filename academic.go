@@ -51,11 +51,11 @@ type seekResult struct {
 }
 
 func fitKey(key string) string {
-	if len(key) <= 127 {
+	if len(key) <= 71 {
 		return key
 	}
 	cksum := crc32.ChecksumIEEE([]byte(key))
-	key = key[:127-10]
+	key = key[:71-10]
 	r, size := utf8.DecodeLastRuneInString(key)
 	if r == utf8.RuneError {
 		key = key[:len(key)-size]
