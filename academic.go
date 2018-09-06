@@ -54,12 +54,13 @@ func fitKey(key string) string {
 	if len(key) <= 127 {
 		return key
 	}
+	cksum := crc32.ChecksumIEEE([]byte(key))
 	key = key[:127-10]
 	r, size := utf8.DecodeLastRuneInString(key)
 	if r == utf8.RuneError {
 		key = key[:len(key)-size]
 	}
-	return key + fmt.Sprintf("..%08x", crc32.ChecksumIEEE([]byte(key)))
+	return key + fmt.Sprintf("..%08x", cksum)
 }
 
 func seekSynonym(query string) ([]seekResult, error) {
